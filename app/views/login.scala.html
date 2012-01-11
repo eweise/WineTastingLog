@@ -1,0 +1,45 @@
+@(loginform: Form[(String,String)])(implicit flash: Flash, session:Session)
+
+@import helper._
+
+
+@index {
+
+<div class="row">
+    <div align="center">
+
+        <div class="form-container">
+            <h3>Sign In</h3>
+            @helper.form(routes.Application.authenticate) {
+            @loginform.globalError.map { error =>
+            <p class="error">
+                @error.message
+            </p>
+            }
+
+            @flash.get("success").map { message =>
+            <p class="success">
+                @message
+            </p>
+            }
+
+            <p>
+                <input type="username" name="username" placeholder="Username" value="@loginform(" username").value">
+            </p>
+
+            <p>
+                <input type="password" name="password" placeholder="Password">
+            </p>
+
+            <p>
+                <button type="submit" class="btn primary">Login</button>
+                <span>New User?  Please </span><a href="/register">Register</a>
+
+            </p>
+
+            }
+        </div>
+    </div>
+</div>
+
+}

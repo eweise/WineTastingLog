@@ -1,0 +1,24 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.login
+GET     /foo                           controllers.Application.foo()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+GET     /tastings                   controllers.Tastings.tastings
+POST    /tastings                  controllers.Tastings.save
+
+# Delete a computer
+GET    /tasting/:id/delete       controllers.Tastings.delete(id:Long)
+
+# Authentication
+POST    /login                              controllers.Application.authenticate
+GET     /logout                             controllers.Application.logout
+
+# Register
+GET     /register                          controllers.Application.register
+POST    /register                          controllers.Application.createUser

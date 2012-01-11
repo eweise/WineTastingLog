@@ -1,0 +1,53 @@
+@(registerform: Form[(String,String, String, String)])(implicit flash: Flash, session:Session)
+
+@import helper._
+
+@index {
+<div class="row">
+    <div align="center">
+
+        <div class="form-container">
+            <h3>Register</h3>
+
+            @helper.form(routes.Application.createUser) {
+            @registerform.globalError.map { error =>
+            <p class="error">
+                @error.message
+            </p>
+            }
+
+            @flash.get("success").map { message =>
+            <p class="success">
+                @message
+            </p>
+            }
+
+            <p>
+                <input name="username" placeholder="username" value="@registerform(" username").value">
+            </p>
+
+            <p>
+                <input type="email" name="email" placeholder="Email" value="@registerform(" email").value">
+            </p>
+
+            <p>
+                <input type="password" name="password" placeholder="Password">
+            </p>
+
+            <p>
+                <input type="password2" name="password2" placeholder="Password">
+            </p>
+
+            <p>
+                <button type="submit" class="btn primary">Register</button>
+                <span>Already a User?  Please </span><a href="/">Login</a>
+
+
+            </p>
+
+            }
+
+        </div>
+    </div>
+    </div>
+    }

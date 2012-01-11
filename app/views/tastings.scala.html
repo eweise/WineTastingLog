@@ -1,0 +1,158 @@
+@(tastings: Seq[Tasting], tastingForm: Form[models.Tasting])(implicit session:Session)
+
+@import helper._
+
+
+@main {
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#modal-from-dom').modal({
+            keyboard: true
+        });
+        $('.edit').click(function(event) {
+            var id = event.currentTarget.id;
+            $('input#brand').val($('#brand' + id).text());
+            $('input#style').val($('#style' + id).text());
+            $('input#year').val($('#year' + id).text());
+            $('input#region').val($('#region' + id).text());
+            $('input#rating').val($('#ratingValue' + id).text());
+            $('textarea#notes').val($('#notesFull' + id).text());
+            $('input#id').val(id);
+            $('#starEdit').raty('start', $('#ratingValue' + id).text());
+            $('#modal-from-dom').modal('show')
+
+            $('results' + id)
+            event.preventDefault();
+        });
+
+
+        $('#starEdit').raty({
+          click: function(score, evt) {
+            $('input#rating').val(score);
+          }
+        });
+
+      @if(tastingForm.hasErrors) {
+            $('#modal-from-dom').modal('show')
+       }
+
+        $('#modal-from-dom').bind('hidden', function () {
+            window.location.href = "/tastings"
+            })
+    });
+
+
+</script>
+
+<div class="page-header">
+    <h1>Tasting Log
+    </h1>
+
+</div>
+<div class="row">
+    <div class="span11">
+        <div align="right"><button data-controls-modal="modal-from-dom" data-backdrop="true" data-keyboard="true" class="btn success">New Tasting </button></div>
+        <p/>
+
+        <table class="table blue zebra-striped">
+            <tr>
+                <th>Brand/Winery</th>
+                <th>Grape/Varietal</th>
+                <th>Year</th>
+                <th>Origin</th>
+                <th>Rating</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            @tastings.map { tasting =>
+            <script type="text/javascript">
+               $(document).ready(function() {
+                $('#rating@tasting.id').raty({
+                    readOnly: true,
+                      start:  @tasting.rating
+                });
+                });
+            </script>
+            <tr>
+                <td id="brand@tasting.id">@tasting.brand</td>
+                <td id="style@tasting.id">@tasting.style</td>
+                <td id="year@tasting.id">@tasting.year</td>
+                <td id="region@tasting.id">@tasting.region</td>
+                <td ><div id="rating@tasting.id"></div></td>
+                <td>
+                    <button id="@tasting.id" class="btn primary edit">E</button>
+                </td>
+                <td>
+                    <input type="submit" value="D" class="btn danger" onclick="location.href='tasting/@tasting.id/delete'">
+                </td>
+                <div id="notesFull@tasting.id" style="visibility:hidden">@tasting.notes</div>
+                <div id="ratingValue@tasting.id" style="visibility:hidden">@tasting.rating</div>
+
+            </tr>
+            }
+        </table>
+
+    </div>
+    <div class="span4">
+        <h3>Trending Wines</h3>
+        <ul>
+            <li><a href="#">Raboll 2009 Pint Blanc</a></li>
+            <li><a href="#">Saxum 2007 Cabernet</a></li>
+            <li><a href="#">Paul Hobbs 2011 Chardonney</a></li>
+            <li><a href="#">Fontodi 2011 Cabernet</a></li>
+        </ul>
+        <h3>Recent Member Activity</h3>
+        <ul>
+            <li><a href="#">Sutter Home 2011 Cabernet 4 Stars </a></li>
+            <li><a href="#">Saxum 2007 Cabernet 3 Stars </a></li>
+            <li><a href="#">Paul Hobbs 2011 Chardonney 3 Stars </a></li>
+            <li><a href="#">Fontodi 2011 Cabernet 4 Stars </a></li>
+        </ul>
+    </div>
+    <div id="modal-from-dom" class="modal hide fade">
+        <div class="modal-header">
+            <a href="#" class="close">&times;</a>
+
+            <h3>New Tasting</h3>
+        </div>
+        <div class="modal-body">
+
+            @form(routes.Tastings.save()) {
+            <!--<input type="hidden" id="id" class="id" />-->
+            <fieldset>
+                <input type="hidden" id="id" name="id" value="">
+                @inputText(tastingForm("brand"), 'label -> "Brand")(twitterBootstrapInput)
+                @inputText(tastingForm("style"), 'label -> "Grape/Varietal")(twitterBootstrapInput)
+                @inputText(tastingForm("region"), 'label -> "Origin")(twitterBootstrapInput)
+                <div class="clearfix ">
+                    <label for="rating">Rating</label>
+                    <div class="input">
+                    <div id="starEdit"></div>
+                        </div>
+                </div>
+                <input type="hidden" id="rating" name="rating" />
+                    @inputText(tastingForm("year"), 'label -> "Year")(twitterBootstrapInput)
+
+                    <div class="clearfix ">
+                        <label for="notes">Notes</label>
+                        <div class="input">
+                            <textarea id="notes" name="notes"></textarea>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+
+
+
+            </fieldset>
+        </div>
+        <div class="modal-footer">
+            <input type="submit" value="Save" class="btn primary">
+            <input  class="btn alternate" type="reset" value="Cancel"/>
+        </div>
+        }
+    </div>
+
+</div>
+
+}
