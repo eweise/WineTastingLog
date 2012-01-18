@@ -90,9 +90,9 @@ object Application extends Controller {
     )
   }
 
-
   def foo = Action {
-    Ok("hello foo")
+    Ok(Tasting.listAsJson(1L))
+
   }
 
 }
