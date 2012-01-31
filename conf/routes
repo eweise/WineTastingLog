@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.login
-GET     /foo                           controllers.Application.foo()
+GET     /rest/tastings          controllers.Rest.tastings
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
@@ -17,6 +17,7 @@ GET    /tasting/:id/delete       controllers.Tastings.delete(id:Long)
 
 # Authentication
 POST    /login                              controllers.Application.authenticate
+POST    /nativelogin                        controllers.Application.nativeAuthenticate
 GET     /logout                             controllers.Application.logout
 
 # Register

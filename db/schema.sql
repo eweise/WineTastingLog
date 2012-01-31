@@ -4,9 +4,9 @@
 
 create sequence user_seq start with 1000;
 
-create table users (id bigint not null, email varchar(255), username varchar(255), password varchar(255), createDate date);
+create table users (id bigint not null, email varchar(255), username varchar(255), password varchar(255), createDate date, token varchar(255));
 
-insert into users(id, email, username, password) values(1, 'eweise@gmail.com', 'eweise', 'welcome');
+insert into users(id, email, username, password) values(1, 'eweise@gmail.com', 'eweise', 'welcome', '2011-01-01');
 
 create sequence tasting_seq start with 1000;
 

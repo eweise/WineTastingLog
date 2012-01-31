@@ -7,17 +7,24 @@ import format.Formats._
 
 import views._
 import models._
+import java.util.UUID
 
 object Application extends Controller {
 
-  val loginForm = Form(
-    of(
-      "username" -> text,
-      "password" -> text
-    ) verifying("Invalid username or password", result => result match {
-      case (username, password) => User.authenticate(username, password).isDefined
-    })
-  )
+  val loginForm = {
+    println("loginForm text = " + text)
+    Form(
+      of(
+        "username" -> text,
+        "password" -> text
+      ) verifying("Invalid username or password", result => result match {
+        case (username, password) => {
+          println("loginForm. authenticate")
+          User.authenticate(username, password).isDefined
+        }
+      })
+    )
+  }
 
   val registerForm = Form(
     of(
@@ -50,12 +57,25 @@ object Application extends Controller {
   def authenticate = Action {
     implicit request =>
       loginForm.bindFromRequest.fold(
-        formWithErrors => {
-          BadRequest(html.login(formWithErrors))
-        },
+        formWithErrors => BadRequest(html.login(formWithErrors)),
         user => {
           val dbUser = User.findByUsername(user._1).get
           Redirect(routes.Tastings.tastings).withSession(User.USERNAME -> dbUser.username, User.USER_ID -> dbUser.id.get.toString)
+        }
+      )
+  }
+
+
+  def nativeAuthenticate = Action {
+    implicit request =>
+      loginForm.bindFromRequest.fold(
+        formWithErrors => {
+          BadRequest("Invalid email or password")
+        }, userForm => {
+          var dbUser = User.findByUsername(userForm._1)
+          dbUser.get.authToken = UUID.randomUUID().toString
+          User.update(dbUser.get)
+          Ok(dbUser.get.authToken)
         }
       )
   }
@@ -90,10 +110,6 @@ object Application extends Controller {
     )
   }
 
-  def foo = Action {
-    Ok(Tasting.listAsJson(1L))
-
-  }
 
 }
 
