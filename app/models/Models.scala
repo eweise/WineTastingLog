@@ -11,18 +11,18 @@ import java.util.Date
 case class Tasting(
                     id: Pk[Long],
                     var userId: Option[Long],
-                    rating: Option[Long],
+                    rating: Option[Int],
                     notes: Option[String],
                     brand: Option[String],
                     style: Option[String],
                     region: Option[String],
-                    year: Option[Long],
+                    year: Option[Int],
                     updateDate: Option[Date]) {
 
   def notesSmall = {
     notes match {
-      case s: Some[String] => if (s.get.size > 15) s.get.substring(0, 15) + "..." else s.get
-      case _ => ""
+      case None => ""
+      case _ => if (notes.get.size > 15) notes.get.substring(0, 15) + "..." else notes.get
     }
   }
 }
@@ -30,15 +30,15 @@ case class Tasting(
 object Tasting {
 
   val simple = {
-    get[Pk[Long]]("id") ~/
-      get[Option[Long]]("userId") ~/
-      get[Option[Long]]("rating") ~/
-      get[Option[String]]("notes") ~/
-      get[Option[String]]("brand") ~/
-      get[Option[String]]("style") ~/
-      get[Option[String]]("region") ~/
-      get[Option[Long]]("year") ~/
-      get[Option[Date]]("updateDate") ^^ {
+     get[Pk[Long]]("id") ~
+      get[Option[Long]]("userId") ~
+      get[Option[Int]]("rating") ~
+      get[Option[String]]("notes") ~
+      get[Option[String]]("brand") ~
+      get[Option[String]]("style") ~
+      get[Option[String]]("region") ~
+      get[Option[Int]]("year") ~
+      get[Option[Date]]("updateDate") map {
       case id ~ userId ~ rating ~ notes ~ brand ~ style ~ region ~ year ~ updateDate => Tasting(id, userId, rating, notes, brand, style, region, year, updateDate)
     }
   }
@@ -46,7 +46,6 @@ object Tasting {
   def list(userId: Long): Seq[Tasting] = {
     DB.withConnection {
       implicit connection => {
-        println("list userid = " + userId)
         SQL(
           """
             select * from tasting where userId = {userId}
@@ -54,6 +53,7 @@ object Tasting {
         ).on('userId -> userId).as(Tasting.simple *)
       }
     }
+
   }
 
   // todo replace with Json library
@@ -107,7 +107,7 @@ object Tasting {
   }
 
 
-  def update(id: Long, userId: Long, tasting: Tasting) = {
+  def update(id: Long, userId: Int, tasting: Tasting) = {
     DB.withConnection {
       implicit connection =>
         SQL(
@@ -159,12 +159,12 @@ object User {
    * Parse a User from a ResultSet
    */
   val simple = {
-    get[Pk[Long]]("id") ~/
-      get[String]("email") ~/
-      get[String]("username") ~/
-      get[String]("password") ~/
-      get[Date]("createDate") ~/
-      get[String]("token") ^^ {
+    get[Pk[Long]]("id") ~
+      get[String]("email") ~
+      get[String]("username") ~
+      get[String]("password") ~
+      get[Date]("createDate") ~
+      get[String]("token") map {
       case id ~ email ~ username ~ password ~ createDate ~ authToken => User(id, email, username, password, createDate, authToken)
     }
   }
@@ -180,7 +180,7 @@ object User {
       implicit connection =>
         SQL("select * from users where username = {username}").on(
           'username -> username
-        ).as(User.simple ?)
+        ).as(User.simple.singleOpt)
     }
   }
 
@@ -208,7 +208,7 @@ object User {
         ).on(
           'username -> username,
           'password -> password
-        ).as(User.simple ?)
+        ).as(User.simple.singleOpt)
     }
   }
 

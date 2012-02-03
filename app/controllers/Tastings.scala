@@ -6,13 +6,23 @@ import anorm.NotAssigned
 import views.html
 import models.{User, Tasting}
 
+import play.api._
+import play.api.mvc._
+import play.api.data._
+import play.api.data.Forms._
 
-object Tastings extends Controller with Security.AllAuthenticated {
+import anorm._
 
-  val tastingForm = Form(
-    of(Tasting.apply _)(
-      "id" -> ignored(NotAssigned),
-      "userId" -> optional(number),
+import views._
+import models._
+
+
+object Tastings extends Controller  {
+
+  val tastingForm:Form[Tasting] = Form(
+    mapping(
+      "id" -> ignored(NotAssigned:Pk[Long]),
+      "userId" -> optional(longNumber),
       "rating" -> optional(number),
       "notes" -> optional(text),
       "brand" -> optional(text),
@@ -20,13 +30,13 @@ object Tastings extends Controller with Security.AllAuthenticated {
       "region" -> optional(text),
       "year" -> optional(number),
       "updateDate" -> optional(date)
-    )
+    )(Tasting.apply)(Tasting.unapply)
   )
 
   def tastings = {
     Action {
       implicit request =>
-        Ok(html.tastings(Tasting.list(request.session.get(User.USER_ID).get.toLong), tastingForm)(request.session))
+        Ok(html.tastings(Tasting.list(request.session.get(User.USER_ID).get.toInt), tastingForm)(request.session))
     }
   }
 
@@ -39,17 +49,17 @@ object Tastings extends Controller with Security.AllAuthenticated {
   def save = Action {
     implicit request =>
       tastingForm.bindFromRequest.fold(
-        formWithErrors => BadRequest(html.tastings(Tasting.list(request.session.get(User.USER_ID).get.toLong), formWithErrors)),
+        formWithErrors => BadRequest(html.tastings(Tasting.list(request.session.get(User.USER_ID).get.toInt), formWithErrors)),
         tasting => {
-          val id = request.body.urlFormEncoded.get("id")
-          id.get(0) match {
+          val id = request.body.asFormUrlEncoded.get("id")
+          id.head match {
             case "" => {
-              tasting.userId = Some(request.session.get(User.USER_ID).get.toLong)
+              tasting.userId = Some(request.session.get(User.USER_ID).get.toInt)
               Tasting.insert(tasting)
             }
             case _ =>
-              val userid = request.session.get(User.USER_ID).get.toLong
-              Tasting.update(id.get(0).toLong, userid, tasting)
+              val userId = request.session.get(User.USER_ID).get.toInt
+              Tasting.update(id.head.toInt, userId, tasting)
           }
           Redirect(routes.Application.login)
         }

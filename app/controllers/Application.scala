@@ -2,6 +2,12 @@ package controllers
 
 import play.api.mvc._
 import play.api.data._
+import play.api.data.Forms._
+
+
+import views._
+import models._
+import play.api.data._
 import play.api.data.validation.Constraints._
 import format.Formats._
 
@@ -11,8 +17,7 @@ import java.util.UUID
 
 object Application extends Controller {
 
-  val loginForm = {
-    println("loginForm text = " + text)
+  val loginForm =
     Form(
       of(
         "username" -> text,
@@ -24,14 +29,13 @@ object Application extends Controller {
         }
       })
     )
-  }
 
   val registerForm = Form(
     of(
-      "username" -> of[String].verifying(required),
-      "email" -> email.verifying(required),
-      "password" -> of[String].verifying(required),
-      "password2" -> of[String].verifying(required)
+      "username" -> nonEmptyText,
+      "email" -> email,
+      "password" -> nonEmptyText,
+      "password2" -> nonEmptyText
     ) verifying("Not all parameters supplied", result => result match {
       case (username, email, password, password2) => {
 

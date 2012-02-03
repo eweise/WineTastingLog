@@ -10,7 +10,7 @@ insert into users(id, email, username, password) values(1, 'eweise@gmail.com', '
 
 create sequence tasting_seq start with 1000;
 
-create table tasting (id bigint not null, userId bigint, rating bigint, notes varchar(1000), brand varchar(255), style varchar(255), region varchar(255), year bigint, updateDate date, constraint pk_tasting primary key (id));
+create table tasting (id bigint not null, userId bigint, rating integer, notes varchar(1000), brand varchar(255), style varchar(255), region varchar(255), year integer, updateDate date, constraint pk_tasting primary key (id));
 
 insert into tasting(id, userId, rating, notes, brand, style, region, year) values(1, 1, 3, 'nice nose', 'Gallo', 'Chardonney','Napa', 1997);
 

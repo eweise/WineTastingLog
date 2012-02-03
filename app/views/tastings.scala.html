@@ -2,6 +2,7 @@
 
 @import helper._
 
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.render) }
 
 @main {
 
@@ -122,9 +123,9 @@
             <!--<input type="hidden" id="id" class="id" />-->
             <fieldset>
                 <input type="hidden" id="id" name="id" value="">
-                @inputText(tastingForm("brand"), 'label -> "Brand")(twitterBootstrapInput)
-                @inputText(tastingForm("style"), 'label -> "Grape/Varietal")(twitterBootstrapInput)
-                @inputText(tastingForm("region"), 'label -> "Origin")(twitterBootstrapInput)
+                @inputText(tastingForm("brand"), 'label -> "Brand")
+                @inputText(tastingForm("style"), 'label -> "Grape/Varietal")
+                @inputText(tastingForm("region"), 'label -> "Origin")
                 <div class="clearfix ">
                     <label for="rating">Rating</label>
                     <div class="input">
@@ -132,7 +133,7 @@
                         </div>
                 </div>
                 <input type="hidden" id="rating" name="rating" />
-                    @inputText(tastingForm("year"), 'label -> "Year")(twitterBootstrapInput)
+                    @inputText(tastingForm("year"), 'label -> "Year")
 
                     <div class="clearfix ">
                         <label for="notes">Notes</label>
