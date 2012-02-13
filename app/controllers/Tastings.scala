@@ -1,12 +1,6 @@
 package controllers
 
-import play.api.mvc.{Security, Controller}
-import play.api.data._
-import anorm.NotAssigned
-import views.html
-import models.{User, Tasting}
 
-import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
