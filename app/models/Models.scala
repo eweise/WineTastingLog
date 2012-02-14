@@ -185,6 +185,18 @@ object User {
   }
 
   /**
+   * Retrieve a User from email.
+   */
+  def findByToken(token: String): Option[User] = {
+    DB.withConnection {
+      implicit connection =>
+        SQL("select * from users where token = {token}").on(
+          'token -> token
+        ).as(User.simple.singleOpt)
+    }
+  }
+
+  /**
    * Retrieve all users.
    */
   def findAll: Seq[User] = {

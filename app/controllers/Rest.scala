@@ -2,57 +2,48 @@ package controllers
 
 import play.api.mvc._
 import play.api.mvc.Controller
-import models.Tasting
 import org.apache.commons.codec.binary.Base64
-import scalax.io.support.FileUtils
 import java.io.{FileOutputStream, File}
+import models.{User, Tasting}
 
 
 object Rest extends Controller {
 
-
   def tastings = Action {
     request =>
       println("tastings")
-      val token = request.queryString.get("token").get.headOption
-      token match {
-        case None => BadRequest("no token supplied")
-        case _ =>
-          Ok(Tasting.listAsJson(1))
+      val token = request.queryString.get("token").get.headOption.getOrElse("")
+      User.findByToken(token) match {
+        case None => BadRequest("no user found")
+        case user: Some[User] => {
+          println("found user " + user.get.id + " with token " + token)
+          Ok(Tasting.listAsJson(user.get.id.get))
+        }
       }
   }
 
   def uploadphoto = Action {
     request =>
-    //      println("token = " + request.queryString.get("token"))
-    //      val token = request.queryString.get("token").get.headOption
-    //      token match {
-    //        case None => BadRequest("no token supplied")
-    //        case _ =>
-    //          println("before multipart")
-      val body = request.body.asFormUrlEncoded
-
-      body.foreach {
-        m =>
-          m.get("token").get.headOption match {
-            case s: Some[String] =>
-              m.get("image").get.headOption match {
-                case s: Some[String] =>
-                  println("getting bytes...")
-                  val bytes = Base64.decodeBase64(s.get.getBytes)
-                  println("finished getting bytes")
-                  val f = new File("test.jpg")
-                  val fos = new FileOutputStream(f)
-                  fos.write(bytes)
-                  fos.close()
-                case _ =>
-              }
-            case _ => {
-              BadRequest("no token specified")
-            }
-          }
+      val message = request.body.asFormUrlEncoded.get.asInstanceOf[Map[String, List[String]]]
+      println("message = " + message)
+      val token = message.get("token").get.headOption.get
+      User.findByToken(token) match {
+        case None => BadRequest("no user found")
+        case _ => {
+          val imageValue = message.get("image").get.headOption.get
+          println("getting bytes...")
+          val bytes = Base64.decodeBase64(imageValue.getBytes)
+          println("finished getting bytes")
+          writeToFile(bytes)
+        }
       }
       Ok(Tasting.listAsJson(1))
+  }
+
+  def writeToFile(bytes: Array[Byte]) {
+    val fos = new FileOutputStream(new File("test.jpg"))
+    fos.write(bytes)
+    fos.close()
   }
 
 
