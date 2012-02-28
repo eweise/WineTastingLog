@@ -1,13 +1,11 @@
 logLevel := Level.Warn
 
-resolvers ++= Seq(
-    DefaultMavenRepository,
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
-)
+// The Typesafe repository
+resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 
-addSbtPlugin("play" % "sbt-plugin" % "2.0-RC1-SNAPSHOT")
-
+// Use the Play sbt plugin for Play projects
+addSbtPlugin("play" % "sbt-plugin" % Option(System.getProperty("play.version")).getOrElse("2.0"))
 
 resolvers += "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
 
-addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "0.11.0")
+addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.0.0")

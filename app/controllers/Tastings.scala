@@ -37,7 +37,6 @@ object Tastings extends Controller  {
   def delete(id: Long) = Action {
     Tasting.delete(id)
     Redirect(routes.Tastings.tastings)
-
   }
 
   def save = Action {
@@ -48,6 +47,7 @@ object Tastings extends Controller  {
           val id = request.body.asFormUrlEncoded.get("id")
           id.head match {
             case "" => {
+              println("tasting id = "+ tasting.id.getClass.getName)
               tasting.userId = Some(request.session.get(User.USER_ID).get.toInt)
               Tasting.insert(tasting)
             }
