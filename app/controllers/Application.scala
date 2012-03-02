@@ -47,7 +47,6 @@ object Application extends Controller {
 
   def login = Action {
     implicit request =>
-
       request.session.get(User.USER_ID) match {
         case None => Ok(html.login(loginForm))
         case _ => {

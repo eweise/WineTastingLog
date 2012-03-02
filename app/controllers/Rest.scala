@@ -6,8 +6,16 @@ import org.apache.commons.codec.binary.Base64
 import java.io.{FileOutputStream, File}
 import models.{User, Tasting}
 import anorm.{NotAssigned, Pk}
-import play.api.data.Form
-import java.util.Date
+import play.api.data._
+import play.api.data.Forms._
+import play.api._
+import play.api.mvc._
+import play.api.data._
+import play.api.data.Forms._
+
+import views._
+
+import models._
 
 
 object Rest extends Controller {
@@ -26,6 +34,18 @@ object Rest extends Controller {
   //    )(Tasting.apply)(Tasting.unapply)
   //  )
 
+  val idForm = Form(
+    tuple(
+      "token" -> text,
+      "id" -> text
+    )
+  )
+
+  def delete  = Action { implicit request =>
+    println("delete called")
+    Tasting.delete(formValue("id").get.toInt)
+    Ok("")
+  }
 
   def tastings = Action {
     request =>
@@ -56,6 +76,7 @@ object Rest extends Controller {
     }
   }
 
+
   def saveTasting = Action {
     implicit request =>
       println("save tasting called")
@@ -76,14 +97,14 @@ object Rest extends Controller {
 
       val tasting = new Tasting(NotAssigned, userId, rating, notes, brand, style, region, year, None)
       val id = formValue("id")
+      println("id = " + id)
 
       id match {
         case None => {
           Tasting.insert(tasting)
         }
         case _ =>
-          val userId = request.session.get(User.USER_ID).get.toInt
-          Tasting.update(id.get.toInt, userId, tasting)
+          Tasting.update(id.get.toInt, userId.get, tasting)
       }
       Ok("")
   }

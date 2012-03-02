@@ -107,7 +107,7 @@ object Tasting {
   }
 
 
-  def update(id: Long, userId: Int, tasting: Tasting) = {
+  def update(id: Long, userId: Long, tasting: Tasting) = {
     DB.withConnection {
       implicit connection =>
         SQL(
