@@ -41,10 +41,11 @@ object Rest extends Controller {
     )
   )
 
-  def delete  = Action { implicit request =>
-    println("delete called")
-    Tasting.delete(formValue("id").get.toInt)
-    Ok("")
+  def delete = Action {
+    implicit request =>
+      println("delete called")
+      Tasting.delete(formValue("id").get.toInt)
+      Ok("")
   }
 
   def tastings = Action {
@@ -60,6 +61,29 @@ object Rest extends Controller {
       }
   }
 
+  def getimage = Action {
+    request =>
+      println("getImage")
+      val token = request.queryString.get("token").get.headOption.getOrElse("")
+      println("getImage token = "+token)
+      User.findByToken(token) match {
+        case None => BadRequest("no user found")
+        case user: Some[User] => {
+          println("getImage found user")
+
+          val tastingId = request.queryString.get("tastingid").get.headOption.getOrElse("")
+          println("found tasting " + tastingId)
+          val image = Image.read(tastingId)
+          image match {
+            case None => Ok("")
+            case _ => val base64Image = Base64.encodeBase64(image.get)
+            println(base64Image)
+            Ok(base64Image)
+          }
+        }
+      }
+  }
+
   def getUser(implicit request: Request[AnyContent]): Option[User] = {
     val token = formValue("token").getOrElse("")
     println("token = " + token)
@@ -69,10 +93,18 @@ object Rest extends Controller {
 
   def formValue(key: String)(implicit request: Request[AnyContent]): Option[String] = {
     val form = request.body.asFormUrlEncoded.get
+    println("formvalue key " + key)
     val value = form.get(key)
+    println("formvalue value = " + value)
     value match {
-      case s: Some[Seq[String]] => value.get.headOption
-      case _ => None
+      case s: Some[Seq[String]] => {
+        println("formvalue some = " + value.get.headOption)
+        value.get.headOption
+      }
+      case _ => {
+        println("formvalue None")
+        None
+      }
     }
   }
 
@@ -94,10 +126,8 @@ object Rest extends Controller {
       val notes = formValue("notes")
       val rating = Some(formValue("rating").getOrElse("1").toInt);
 
-
       val tasting = new Tasting(NotAssigned, userId, rating, notes, brand, style, region, year, None)
       val id = formValue("id")
-      println("id = " + id)
 
       id match {
         case None => {
@@ -114,6 +144,7 @@ object Rest extends Controller {
       val message = request.body.asFormUrlEncoded.get.asInstanceOf[Map[String, List[String]]]
       println("message = " + message)
       val token = message.get("token").get.headOption.get
+      val tastingId = message.get("tastingid").get.headOption.get
       User.findByToken(token) match {
         case None => BadRequest("no user found")
         case _ => {
@@ -121,37 +152,11 @@ object Rest extends Controller {
           println("getting bytes...")
           val bytes = Base64.decodeBase64(imageValue.getBytes)
           println("finished getting bytes")
-          writeToFile(bytes)
+          Image.write(tastingId, bytes)
         }
       }
       Ok(Tasting.listAsJson(1))
   }
-
-  def writeToFile(bytes: Array[Byte]) {
-    val fos = new FileOutputStream(new File("test.jpg"))
-    fos.write(bytes)
-    fos.close()
-  }
-
-  //  def save = Action {
-  //    implicit request =>
-  //      tastingForm.bindFromRequest.fold(
-  //        formWithErrors => BadRequest(html.tastings(Tasting.list(request.session.get(User.USER_ID).get.toInt), formWithErrors)),
-  //        tasting => {
-  //          val id = request.body.asFormUrlEncoded.get("id")
-  //          id.head match {
-  //            case "" => {
-  //              tasting.userId = Some(request.session.get(User.USER_ID).get.toInt)
-  //              Tasting.insert(tasting)
-  //            }
-  //            case _ =>
-  //              val userId = request.session.get(User.USER_ID).get.toInt
-  //              Tasting.update(id.head.toInt, userId, tasting)
-  //          }
-  //          Redirect(routes.Application.login)
-  //        }
-  //      )
-  //  }
 
 
 }

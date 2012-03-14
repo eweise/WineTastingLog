@@ -11,11 +11,11 @@ import views._
 import models._
 
 
-object Tastings extends Controller  {
+object Tastings extends Controller {
 
-  val tastingForm:Form[Tasting] = Form(
+  val tastingForm: Form[Tasting] = Form(
     mapping(
-      "id" -> ignored(NotAssigned:Pk[Long]),
+      "id" -> ignored(NotAssigned: Pk[Long]),
       "userId" -> optional(longNumber),
       "rating" -> optional(number),
       "notes" -> optional(text),
@@ -47,7 +47,7 @@ object Tastings extends Controller  {
           val id = request.body.asFormUrlEncoded.get("id")
           id.head match {
             case "" => {
-              println("tasting id = "+ tasting.id.getClass.getName)
+              println("tasting id = " + tasting.id.getClass.getName)
               tasting.userId = Some(request.session.get(User.USER_ID).get.toInt)
               Tasting.insert(tasting)
             }

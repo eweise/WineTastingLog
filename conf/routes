@@ -6,6 +6,7 @@
 GET     /                           controllers.Application.login
 GET     /rest/tastings              controllers.Rest.tastings
 POST    /rest/uploadphoto           controllers.Rest.uploadphoto
+GET     /rest/getimage              controllers.Rest.getimage
 POST    /rest/savetasting          controllers.Rest.saveTasting
 POST    /rest/delete               controllers.Rest.delete
 

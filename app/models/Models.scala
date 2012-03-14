@@ -30,7 +30,7 @@ case class Tasting(
 object Tasting {
 
   val simple = {
-     get[Pk[Long]]("id") ~
+    get[Pk[Long]]("id") ~
       get[Option[Long]]("userId") ~
       get[Option[Int]]("rating") ~
       get[Option[String]]("notes") ~
@@ -53,11 +53,11 @@ object Tasting {
         ).on('userId -> userId).as(Tasting.simple *)
       }
     }
-
   }
 
   // todo replace with Json library
   def listAsJson(userId: Long) = {
+
     val tastings = for (tasting <- list(userId)) yield {
       "{" +
         kv("id", tasting.id.getOrElse("")) + "," +
@@ -69,10 +69,19 @@ object Tasting {
         kv("notes", tasting.notes.getOrElse("")) +
         "}"
     }
-    "{\"tastings\":[" + commaDelimit(tastings) + "]}"
+    val result = "{\"tastings\":[" + commaDelimit(tastings) + "]}"
+    println("tasting json = " + result)
+    result
   }
 
-  def commaDelimit(seq: Seq[String]) = seq.reduceLeft((acc, result) => acc + "," + result)
+  def commaDelimit(seq: Seq[String]) = {
+    if (seq.size > 0) {
+      seq.reduceLeft((acc, result) => acc + "," + result)
+    }
+    else {
+      None
+    }
+  }
 
   def kv(key: String, value: Any) = {
     quote(key) + ":" + quote(value)
@@ -236,10 +245,10 @@ object User {
           token = {authToken}
           """
         ).on(
-        'email -> user.email,
-        'username -> user.username,
-        'password -> user.password,
-        'authToken -> user.authToken
+          'email -> user.email,
+          'username -> user.username,
+          'password -> user.password,
+          'authToken -> user.authToken
         ).executeUpdate()
     }
   }
