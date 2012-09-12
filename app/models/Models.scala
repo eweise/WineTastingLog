@@ -43,6 +43,11 @@ object Tasting {
     }
   }
 
+  def load(id:Long) = DB.withConnection ( implicit c => (
+    SQL( """select * from tasting where id = {tastingId}""")
+    .on('tastingId -> id)
+    .as(Tasting.simple.singleOpt)))
+
   def list(userId: Long): Seq[Tasting] = {
     DB.withConnection {
       implicit connection => {
@@ -116,7 +121,7 @@ object Tasting {
   }
 
 
-  def update(id: Long, userId: Long, tasting: Tasting) = {
+  def update(id: Long, tasting: Tasting) = {
     DB.withConnection {
       implicit connection =>
         SQL(
@@ -127,7 +132,7 @@ object Tasting {
           """
         ).on(
           'id -> id,
-          'userId -> userId,
+          'userId -> tasting.userId,
           'rating -> tasting.rating,
           'notes -> tasting.notes,
           'brand -> tasting.brand,

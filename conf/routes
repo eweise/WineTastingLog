@@ -4,20 +4,23 @@
 
 # Home page
 GET     /                           controllers.Application.login
-GET     /rest/tastings              controllers.Rest.tastings
+GET     /rest/tastings/:token       controllers.Rest.tastings(token:String)
 POST    /rest/uploadphoto           controllers.Rest.uploadphoto
 GET     /rest/getimage              controllers.Rest.getimage
-POST    /rest/savetasting          controllers.Rest.saveTasting
-POST    /rest/delete               controllers.Rest.delete
+POST    /rest/savetasting           controllers.Rest.saveTasting
+#POST    /rest/delete/:token         controllers.Rest.delete
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 GET     /tastings                   controllers.Tastings.tastings
-POST    /tastings                  controllers.Tastings.save
+GET     /tasting/:id               controllers.EditTasting.edit(id:Long)
+GET     /tasting                   controllers.EditTasting.newTasting
+POST    /tasting/:id               controllers.EditTasting.update(id:Long)
+POST    /tasting                   controllers.EditTasting.saveNew
 
 # Delete a computer
-GET    /tasting/:id/delete       controllers.Tastings.delete(id:Long)
+GET    /tasting/:id/delete       controllers.EditTasting.delete(id:Long)
 
 # Authentication
 POST    /login                              controllers.Application.authenticate

@@ -1,38 +1,19 @@
 package controllers
 
-import play.api.mvc._
-import play.api.mvc.Controller
 import org.apache.commons.codec.binary.Base64
-import java.io.{FileOutputStream, File}
-import models.{User, Tasting}
-import anorm.{NotAssigned, Pk}
-import play.api.data._
-import play.api.data.Forms._
-import play.api._
-import play.api.mvc._
+import anorm.NotAssigned
 import play.api.data._
 import play.api.data.Forms._
 
-import views._
 
 import models._
+import play.api.Logger
+import play.api.mvc._
 
 
 object Rest extends Controller {
 
-  //  val tastingForm:Form[Tasting] = Form(
-  //    mapping(
-  //      "id" -> ignored(NotAssigned:Pk[Long]),
-  //      "userId" -> optional(longNumber),
-  //      "rating" -> optional(number),
-  //      "notes" -> optional(text),
-  //      "brand" -> optional(text),
-  //      "style" -> optional(text),
-  //      "region" -> optional(text),
-  //      "year" -> optional(number),
-  //      "updateDate" -> optional(date)
-  //    )(Tasting.apply)(Tasting.unapply)
-  //  )
+  type Token = String
 
   val idForm = Form(
     tuple(
@@ -41,43 +22,46 @@ object Rest extends Controller {
     )
   )
 
-  def delete = Action {
+  def delete(implicit token:Token) = tokenAction {
     implicit request =>
-      println("delete called")
-      Tasting.delete(formValue("id").get.toInt)
+      Logger.info("delete called")
+      request.authToken
+//      Tasting.delete(id)
       Ok("")
   }
 
-  def tastings = Action {
-    request =>
-      println("tastings")
-      val token = request.queryString.get("token").get.headOption.getOrElse("")
+
+  def tokenAction[A](f: User => Result)(implicit token: Token) = Action {
+    implicit request =>
+      println("tokenAction")
+      Logger.debug("tokenAction")
       User.findByToken(token) match {
-        case None => BadRequest("no user found")
-        case user: Some[User] => {
-          println("found user " + user.get.id + " with token " + token)
-          Ok(Tasting.listAsJson(user.get.id.get))
+        case None => BadRequest("No user found")
+        case Some(user) => {
+          f(user)
         }
       }
   }
 
+  def tastings(implicit token:Token) = tokenAction(user => Ok(Tasting.listAsJson(user.id.get)))
+
+
   def getimage = Action {
     request =>
-      println("getImage")
+      Logger.debug("getImage")
       val token = request.queryString.get("token").get.headOption.getOrElse("")
-      println("getImage token = "+token)
+      Logger.debug("getImage token = " + token)
       User.findByToken(token) match {
         case None => BadRequest("no user found")
-        case user: Some[User] => {
-          println("getImage found user")
+        case _ => {
+          Logger.debug("getImage found user")
 
           val tastingId = request.queryString.get("tastingid").get.headOption.getOrElse("")
-          println("found tasting " + tastingId)
+          Logger.debug("found tasting " + tastingId)
           val image = Image.read(tastingId)
           image match {
             case None => Ok("")
             case _ => val base64Image = Base64.encodeBase64(image.get)
-            println(base64Image)
             Ok(base64Image)
           }
         }
@@ -86,23 +70,22 @@ object Rest extends Controller {
 
   def getUser(implicit request: Request[AnyContent]): Option[User] = {
     val token = formValue("token").getOrElse("")
-    println("token = " + token)
     User.findByToken(token)
   }
 
 
   def formValue(key: String)(implicit request: Request[AnyContent]): Option[String] = {
     val form = request.body.asFormUrlEncoded.get
-    println("formvalue key " + key)
+    Logger.debug("formvalue key " + key)
     val value = form.get(key)
-    println("formvalue value = " + value)
+    Logger.debug("formvalue value = " + value)
     value match {
       case s: Some[Seq[String]] => {
-        println("formvalue some = " + value.get.headOption)
+        Logger.debug("formvalue some = " + value.get.headOption)
         value.get.headOption
       }
       case _ => {
-        println("formvalue None")
+        Logger.debug("formvalue None")
         None
       }
     }
@@ -134,7 +117,7 @@ object Rest extends Controller {
           Tasting.insert(tasting)
         }
         case _ =>
-          Tasting.update(id.get.toInt, userId.get, tasting)
+          Tasting.update(id.get.toInt,  tasting)
       }
       Ok("")
   }
@@ -142,16 +125,16 @@ object Rest extends Controller {
   def uploadphoto = Action {
     request =>
       val message = request.body.asFormUrlEncoded.get.asInstanceOf[Map[String, List[String]]]
-      println("message = " + message)
+      Logger.debug("message = " + message)
       val token = message.get("token").get.headOption.get
       val tastingId = message.get("tastingid").get.headOption.get
       User.findByToken(token) match {
         case None => BadRequest("no user found")
         case _ => {
           val imageValue = message.get("image").get.headOption.get
-          println("getting bytes...")
+          Logger.debug("getting bytes...")
           val bytes = Base64.decodeBase64(imageValue.getBytes)
-          println("finished getting bytes")
+          Logger.info("finished getting bytes")
           Image.write(tastingId, bytes)
         }
       }
