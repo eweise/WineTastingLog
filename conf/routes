@@ -15,6 +15,7 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 GET     /tastings                   controllers.Tastings.tastings
 GET     /tasting/:id               controllers.EditTasting.edit(id:Long)
+POST    /upload                     controllers.Tastings.upload
 GET     /tasting                   controllers.EditTasting.newTasting
 POST    /tasting/:id               controllers.EditTasting.update(id:Long)
 POST    /tasting                   controllers.EditTasting.saveNew

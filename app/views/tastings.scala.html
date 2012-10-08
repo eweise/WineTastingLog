@@ -7,14 +7,14 @@
 @main {
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#modal-from-dom').modal({
-            keyboard: true
+            keyboard:true
         });
         $('#starEdit').raty({
-          click: function(score, evt) {
-            $('input#rating').val(score);
-          }
+            click:function (score, evt) {
+                $('input#rating').val(score);
+            }
         });
 
     });
@@ -22,74 +22,57 @@
 
 </script>
 
-<div class="page-header">
-    <h1>Tasting Log
-    </h1>
-
-</div>
-
-<div class="row">
-    <div class="span11">
-        <div align="right">
-            <a href="/tasting" role="button" class="btn" data-toggle="modal">New Tasting</a>
-        </div>
-        <p/>
-
-        <table class="table blue zebra-striped">
-            <tr>
-                <th>Brand/Winery</th>
-                <th>Grape/Varietal</th>
-                <th>Year</th>
-                <th>Origin</th>
-                <th>Rating</th>
-                <th>Edit</th>
-                <th>Delete</th>
-            </tr>
+<div class="row-fluid" style="margin-top: 30px">
+    <div class=" content span8">
+        <div>
+        <ul class="thumbnails">
             @tastings.map { tasting =>
-            <script type="text/javascript">
-               $(document).ready(function() {
-                $('#rating@tasting.id').raty({
-                    readOnly: true,
-                      start:  @tasting.rating
-                });
-                });
-            </script>
-            <tr>
-                <td id="brand@tasting.id">@tasting.brand</td>
-                <td id="style@tasting.id">@tasting.style</td>
-                <td id="year@tasting.id">@tasting.year</td>
-                <td id="region@tasting.id">@tasting.region</td>
-                <td ><div id="rating@tasting.id"></div></td>
-                <td>
-                    <a href="/tasting/@tasting.id" role="button" class="btn" ">E</a>
-                </td>
-                <td>
-                    <input type="submit" value="D" class="btn danger" onclick="location.href='tasting/@tasting.id/delete'">
-                </td>
-                <div id="notesFull@tasting.id" style="visibility:hidden">@tasting.notes</div>
-                <div id="ratingValue@tasting.id" style="visibility:hidden">@tasting.rating</div>
-            </tr>
+
+            <li >
+                <a href="tasting/@tasting.id" class="thumbnail plain">
+                    <img class="img-rounded" src="assets/images/user/image_@tasting.id" alt="" height="350" width="325">
+                    <h4>@tasting.brand</h4>
+
+                    <div>
+                        <p>style: @tasting.style</p>
+
+                        <p>year: @tasting.year</p>
+
+                        <p>region: @tasting.region</p>
+
+                        <p>            <script type="text/javascript">
+                                        $(document).ready(function () {
+                                            $('#rating@tasting.id').raty({
+                                                readOnly:true,
+                                                start:  @tasting.rating
+                                        })
+                                        })
+                                        ;
+                                    </script>
+                        </p>
+                    </div>
+                </a>
+            </li>
             }
-        </table>
-
-    </div>
-    <div class="span4 visible-desktop">
-        <h3>Trending Wines</h3>
-        <ul>
-            <li><a href="#">Raboll 2009 Pint Blanc</a></li>
-            <li><a href="#">Saxum 2007 Cabernet</a></li>
-            <li><a href="#">Paul Hobbs 2011 Chardonney</a></li>
-            <li><a href="#">Fontodi 2011 Cabernet</a></li>
         </ul>
-        <h3>Recent Member Activity</h3>
-        <ul>
-            <li><a href="#">Sutter Home 2011 Cabernet 4 Stars </a></li>
-            <li><a href="#">Saxum 2007 Cabernet 3 Stars </a></li>
-            <li><a href="#">Paul Hobbs 2011 Chardonney 3 Stars </a></li>
-            <li><a href="#">Fontodi 2011 Cabernet 4 Stars </a></li>
-        </ul>
+        </div>
     </div>
-
+    <div class="span4">
+        <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+                <li class="nav-header"><h4>Trending Wines</h4></li>
+                <li><a href="#">Raboll 2009 Pint Blanc</a></li>
+                <li><a href="#">Saxum 2007 Cabernet</a></li>
+                <li><a href="#">Paul Hobbs 2011 Chardonney</a></li>
+                <li><a href="#">Fontodi 2011 Cabernet</a></li>
+                <li class="nav-header"><h4>Recent Member Entries</h4></li>
+                <li><a href="#">Sutter Home 2011 Cabernet 4 Stars </a></li>
+                <li><a href="#">Saxum 2007 Cabernet 3 Stars </a></li>
+                <li><a href="#">Paul Hobbs 2011 Chardonney 3 Stars </a></li>
+                <li><a href="#">Fontodi 2011 Cabernet 4 Stars </a></li>
+            </ul>
+        </div>
+    </div>
 </div>
 
 }
