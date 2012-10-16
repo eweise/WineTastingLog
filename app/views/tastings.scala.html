@@ -31,26 +31,8 @@
             <li >
                 <a href="tasting/@tasting.id" class="thumbnail plain">
                     <img class="img-rounded" src="assets/images/user/image_@tasting.id" alt="" height="350" width="325">
-                    <h4>@tasting.brand</h4>
+                    <h4>@tasting.year @tasting.brand @tasting.style</h4>
 
-                    <div>
-                        <p>style: @tasting.style</p>
-
-                        <p>year: @tasting.year</p>
-
-                        <p>region: @tasting.region</p>
-
-                        <p>            <script type="text/javascript">
-                                        $(document).ready(function () {
-                                            $('#rating@tasting.id').raty({
-                                                readOnly:true,
-                                                start:  @tasting.rating
-                                        })
-                                        })
-                                        ;
-                                    </script>
-                        </p>
-                    </div>
                 </a>
             </li>
             }
