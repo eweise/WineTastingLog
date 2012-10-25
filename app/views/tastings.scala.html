@@ -1,40 +1,35 @@
 @(tastings: Seq[Tasting])(implicit session:Session)
 
 @import helper._
+@import tags._
 
 @implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.render) }
 
 @main {
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('#modal-from-dom').modal({
-            keyboard:true
-        });
-        $('#starEdit').raty({
-            click:function (score, evt) {
-                $('input#rating').val(score);
-            }
-        });
-
-    });
-
-
-</script>
-
 <div class="row-fluid" style="margin-top: 30px">
     <div class=" content span8">
         <div>
         <ul class="thumbnails">
-            @tastings.map { tasting =>
+            @if(tastings.isEmpty) {
+             <li>
+                 <a href="tasting" class="thumbnail plain">
+                     <img class="img-rounded" src="assets/images/user/" alt="" height="350" width="325">
+                     <h4>New Tasting</h4>
+                 </a>
+             </li>
+            }
+            @if(!tastings.isEmpty) {
+                @tastings.map { tasting =>
 
-            <li >
-                <a href="tasting/@tasting.id" class="thumbnail plain">
-                    <img class="img-rounded" src="assets/images/user/image_@tasting.id" alt="" height="350" width="325">
-                    <h4>@tasting.year @tasting.brand @tasting.style</h4>
-
-                </a>
-            </li>
+                <li >
+                    <a href="tasting/@tasting.id" class="thumbnail plain">
+                        <img class="img-rounded" src="/assets/images/user/image_@tasting.id" alt="" height="350" width="325">
+                        <h4>@tasting.year @tasting.brand @tasting.style</h4>
+                    </a>
+                    @rating(Some(tasting.id.get.toString), tasting.rating.getOrElse(0).toString)
+                </li>
+                }
             }
         </ul>
         </div>
@@ -43,10 +38,9 @@
         <div class="well sidebar-nav">
             <ul class="nav nav-list">
                 <li class="nav-header"><h4>Trending Wines</h4></li>
-                <li><a href="#">Raboll 2009 Pint Blanc</a></li>
-                <li><a href="#">Saxum 2007 Cabernet</a></li>
-                <li><a href="#">Paul Hobbs 2011 Chardonney</a></li>
-                <li><a href="#">Fontodi 2011 Cabernet</a></li>
+                 @Tasting.trending.map{ tasting =>
+                <li><a href="#">@tasting.year @tasting.brand @tasting.style</a></li>
+                }
                 <li class="nav-header"><h4>Recent Member Entries</h4></li>
                 <li><a href="#">Sutter Home 2011 Cabernet 4 Stars </a></li>
                 <li><a href="#">Saxum 2007 Cabernet 3 Stars </a></li>

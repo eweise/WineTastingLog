@@ -5,7 +5,7 @@ import play.api.Play.current
 
 import anorm._
 import anorm.SqlParser._
-import java.util.Date
+import java.util.{UUID, Date}
 
 
 case class Tasting(
@@ -53,9 +53,21 @@ object Tasting {
       implicit connection => {
         SQL(
           """
-            select * from tasting where userId = {userId}
+            select * from tasting where userId = {userId} order by id
           """
         ).on('userId -> userId).as(Tasting.simple *)
+      }
+    }
+  }
+
+  def trending : Seq[Tasting] = {
+    DB.withConnection {
+      implicit connection => {
+        SQL(
+          """
+            select * from tasting limit 5
+          """
+        ).as(Tasting.simple *)
       }
     }
   }
@@ -263,14 +275,15 @@ object User {
       implicit connection =>
         SQL(
           """
-            insert into users (id, email, username, password, createDate) values ( nextval('user_seq'),
-              {email}, {username}, {password}, {createDate}
+            insert into users (id, email, username, password, token, createDate) values ( nextval('user_seq'),
+              {email}, {username}, {password}, {token}, {createDate}
             )
           """
         ).on(
           'email -> email,
           'username -> username,
           'password -> password,
+          'token -> UUID.randomUUID().toString,
           'createDate -> new Date()
         ).executeUpdate()
 

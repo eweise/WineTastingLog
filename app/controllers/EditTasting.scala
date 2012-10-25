@@ -44,7 +44,7 @@ object EditTasting extends Controller {
       tastingForm.bindFromRequest.fold(
         formWithErrors => BadRequest(html.editTastings(None, formWithErrors)),
         tasting => {
-          println("tasting id = " + tasting.id.getClass.getName)
+          println("tasting rating = " + tasting.rating)
           tasting.userId = Some(request.session.get(User.USER_ID).get.toInt)
           Tasting.insert(tasting)
           Redirect(routes.Application.login)
@@ -52,15 +52,22 @@ object EditTasting extends Controller {
       )
   }
 
-  def update(id:Long) = Action {
+  def update(id: Long) = Action(parse.multipartFormData) {
     implicit request =>
+      request.body.file("image").map {
+        file =>
+          file.ref.moveTo(new File("public/images/user/image_" + id), true)
+      }
+
       tastingForm.bindFromRequest.fold(
         formWithErrors => BadRequest(html.editTastings(Some(id), formWithErrors)),
         tasting => {
           tasting.userId = Some(request.session.get(User.USER_ID).get.toInt)
           Tasting.update(id, tasting)
+          Ok(html.tastings(Tasting.list(request.session.get(User.USER_ID).get.toInt))(request.session))
           Redirect(routes.Application.login)
         }
+
       )
   }
 
