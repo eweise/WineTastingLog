@@ -108,17 +108,22 @@ object Tasting {
     "\"" + value + "\""
   }
 
-  def insert(tasting: Tasting) = {
+  def insert(tasting: Tasting):Long = {
+    var id:Long = 0
+
     DB.withConnection {
       implicit connection => {
+        id = SQL("""select nextval('tasting_seq')""").apply().head[Long]("nextval")
+
         println("insert user id = " + tasting.userId)
         SQL(
           """
-            insert into tasting(id, userId, rating, notes, brand, style, region, year, updateDate) values (nextval('tasting_seq'),
+            insert into tasting(id, userId, rating, notes, brand, style, region, year, updateDate) values ({id},
               {userId}, {rating}, {notes}, {brand}, {style}, {region}, {year},{updateDate}
             )
           """
         ).on(
+          'id -> id,
           'userId -> tasting.userId,
           'rating -> tasting.rating,
           'notes -> tasting.notes,
@@ -130,6 +135,7 @@ object Tasting {
         ).executeUpdate()
       }
     }
+    id
   }
 
 
