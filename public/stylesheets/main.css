@@ -88,6 +88,8 @@ table.computers .header a {
 .rating:not(:checked) > label {
     float:right;
     width:1em;
+    margin-top:-10px;
+    margin-bottom:20px;
     padding:0 .1em;
     overflow:hidden;
     white-space:nowrap;
@@ -127,3 +129,4 @@ table.computers .header a {
     top:2px;
     left:2px;
 }
+

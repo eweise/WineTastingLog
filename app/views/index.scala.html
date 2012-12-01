@@ -5,14 +5,10 @@
 @main {
 
 @flash.get("success").map { message =>
-<p class="success">
+<div class="alert">
     @message
-</p>
-}
-<div align="center" class="page-header">
-    <h1 style="color:red">Wine Tasting Log has not yet been uncorked</h1>
-
 </div>
+}
 <div class="row">
     @content
 </div>

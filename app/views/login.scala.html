@@ -4,42 +4,39 @@
 
 
 @index {
+@loginform.globalError.map { error =>
+    <div class="alert pagination-centered">
+        @error.message
+    </div>
+}
 
-<div class="row">
-    <div align="center">
+<div class="row-fluid"><div class="pagination-centered"><h2>Login</h2></div></div>
+<div class="row-fluid">
+    <div class="form-container login-form" style="width:20em; margin-top:0px;">
+        @helper.form(routes.Application.authenticate) {
 
-        <div class="form-container">
-            <h3>Sign In</h3>
-            @helper.form(routes.Application.authenticate) {
-            @loginform.globalError.map { error =>
-            <p class="error">
-                @error.message
-            </p>
-            }
 
-            @flash.get("success").map { message =>
-            <p class="success">
-                @message
-            </p>
-            }
-
-            <p>
-                <input type="username" name="username" placeholder="Username" value="@loginform(" username").value">
-            </p>
-
-            <p>
-                <input type="password" name="password" placeholder="Password">
-            </p>
-
-            <p>
-                <button type="submit" class="btn primary">Login</button>
+            <div class="control-group">
+                <label class="control-label" for="username">Email</label>
+                <div class="controls">
+                    <input type="text" id="username" name="username" placeholder="Username" value="@loginform(" username").value">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="password">Password</label>
+                <div class="controls">
+                    <input type="password" id="password" name="password" placeholder="Password">
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="submit" class="btn primary">Login</button>
+                </div>
+             </div>
                 <span>New User?  Please </span><a href="/register">Register</a>
-
-            </p>
 
             }
         </div>
-    </div>
 </div>
 
 }
