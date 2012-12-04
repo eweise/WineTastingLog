@@ -3,51 +3,52 @@
 @import helper._
 
 @index {
-<div class="row">
-    <div align="center">
 
-        <div class="form-container">
-            <h3>Register</h3>
+@registerform.globalError.map { error =>
+<div class="alert pagination-centered"> @error.message</div> }
 
-            @helper.form(routes.Application.createUser) {
-            @registerform.globalError.map { error =>
-            <p class="error">
-                @error.message
-            </p>
-            }
+<div class="row-fluid">
+    <div class="pagination-centered">
+        <h2>Register</h2>
+    </div>
+</div>
 
-            @flash.get("success").map { message =>
-            <p class="success">
-                @message
-            </p>
-            }
+<div class="row-fluid">
 
-            <p>
-                <input name="username" placeholder="username" value="@registerform(" username").value">
-            </p>
-
-            <p>
-                <input type="email" name="email" placeholder="Email" value="@registerform(" email").value">
-            </p>
-
-            <p>
-                <input type="password" name="password" placeholder="Password">
-            </p>
-
-            <p>
-                <input type="password2" name="password2" placeholder="Password">
-            </p>
-
-            <p>
-                <button type="submit" class="btn primary">Register</button>
-                <span>Already a User?  Please </span><a href="/">Login</a>
-
-
-            </p>
-
-            }
-
+    <div class="form-container " style="width:20em; margin-top:0px;padding-bottom:10px;">
+        @helper.form(routes.Application.createUser) {
+        <div class="control-group">
+            <!--<label class="control-label" for="email">Email Address</label>-->
+            <div class="controls">
+                <input type="text" id="email" name="email" placeholder="Email" value="@registerform(" email").value">
+            </div>
+        </div>
+        <div class="control-group">
+            <!--<label class="control-label" for="password">Password</label>-->
+            <div class="controls">
+                <input type="password" id="password" name="password" placeholder="Password" value="@registerform("password").value">
+            </div>
+        </div>
+        <div class="control-group">
+            <!--<label class="control-label" for="password2">Password Again</label>-->
+            <div class="controls">
+                <input type="password" id="password2" name="password2" placeholder="Password Again">
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="username">(optional)</label>
+                <div class="controls">
+                    <input type="text" id="username" name="username" placeholder="Visible Name" value="@registerform(" username").value">
+                </div>
+            </div>
+            <button type="submit" class="btn primary">Register</button>
         </div>
     </div>
-    </div>
     }
+    <div class="row-fluid" align="center">
+        <h4>Existing users please <a href="/">Login</a></h4>
+    </div>
+
+</div>
+</div>
+</div>
+}

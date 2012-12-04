@@ -130,3 +130,7 @@ table.computers .header a {
     left:2px;
 }
 
+input, textarea {
+    width: 95%;
+}
+
