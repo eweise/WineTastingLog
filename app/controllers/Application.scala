@@ -38,7 +38,7 @@ object Application extends Controller {
       "password2" -> nonEmptyText
     ) verifying("Not all parameters supplied", result => result match {
       case (username, email, password, password2) => {
-        if(!User.findByUsername(username).isEmpty) {
+        if (!User.findByUsername(username).isEmpty) {
           false
         }
         true

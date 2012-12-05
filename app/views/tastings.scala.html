@@ -21,13 +21,13 @@
             }
             @if(!tastings.isEmpty) {
                 @tastings.map { tasting =>
-
-                <li >
-                    <a href="tasting/@tasting.id" class="thumbnail plain">
-                        <img class="img-rounded" src="/assets/images/user/image_@tasting.id" alt="" height="350" width="325">
-                        <h4>@tasting.year @tasting.brand @tasting.style</h4>
+                <li>
+                    <a href="tasting/@tasting.id" class="thumbnail plain"  style="background:white">
+                        <img class="img-rounded" src="/assets/images/user/image_@tasting.id" alt="" height="350" width="325"/>
+                        <div style="margin-bottom:40px"><h4 align="left">@tasting.year @tasting.brand @tasting.style</h4>
+                            @rating(Some(tasting.id.get.toString), tasting.rating.getOrElse(0).toString)
+                        </div>
                     </a>
-                    @rating(Some(tasting.id.get.toString), tasting.rating.getOrElse(0).toString)
                 </li>
                 }
             }
