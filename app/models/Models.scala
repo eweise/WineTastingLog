@@ -239,16 +239,16 @@ object User {
   /**
    * Authenticate a User.
    */
-  def authenticate(username: String, password: String): Option[User] = {
+  def authenticate(email: String, password: String): Option[User] = {
     DB.withConnection {
       implicit connection =>
         SQL(
           """
            select * from users where
-           username = {username} and password = {password}
+           email = {email} and password = {password}
           """
         ).on(
-          'username -> username,
+          'email -> email,
           'password -> password
         ).as(User.simple.singleOpt)
     }

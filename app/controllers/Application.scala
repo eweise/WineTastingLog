@@ -22,7 +22,7 @@ object Application extends Controller {
       tuple(
         "email" -> email,
         "password" -> nonEmptyText
-      ) verifying("Invalid username or password", t => User.authenticate(t._1, t._2).isDefined)
+      ) verifying("Invalid email or password", t => User.authenticate(t._1, t._2).isDefined)
     )
 
   val registerForm = Form(
