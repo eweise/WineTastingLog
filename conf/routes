@@ -4,11 +4,6 @@
 
 # Home page
 GET     /                           controllers.Application.login
-GET     /rest/tastings/:token       controllers.Rest.tastings(token:String)
-POST    /rest/uploadphoto           controllers.Rest.uploadphoto
-GET     /rest/getimage              controllers.Rest.getimage
-POST    /rest/savetasting           controllers.Rest.saveTasting
-#POST    /rest/delete/:token         controllers.Rest.delete
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
@@ -25,7 +20,6 @@ GET    /tasting/:id/delete       controllers.EditTasting.delete(id:Long)
 
 # Authentication
 POST    /login                              controllers.Application.authenticate
-POST    /nativelogin                        controllers.Application.nativeAuthenticate
 GET     /logout                             controllers.Application.logout
 
 # Register

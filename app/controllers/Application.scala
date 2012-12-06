@@ -54,21 +54,6 @@ object Application extends Controller {
       )
   }
 
-
-  def nativeAuthenticate = Action {
-    implicit request =>
-      loginForm.bindFromRequest.fold(
-        formWithErrors => {
-          BadRequest("Invalid email or password")
-        }, userForm => {
-          var dbUser = User.findByEmail(userForm._1)
-          dbUser.get.authToken = UUID.randomUUID().toString
-          User.update(dbUser.get)
-          Ok(dbUser.get.authToken)
-        }
-      )
-  }
-
   def register = Action {
     implicit request =>
       Ok(html.register(registerForm))
