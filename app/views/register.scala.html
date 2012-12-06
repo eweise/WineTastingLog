@@ -1,6 +1,6 @@
-@(registerform: Form[(String,String, String, String)])(implicit flash: Flash, session:Session)
+@(registerform: Form[(Option[String],String, String, String)])(implicit flash: Flash, session:Session)
 
-@import helper._
+@import helper.twitterBootstrap._
 
 @index {
 
@@ -17,36 +17,17 @@
 
     <div class="form-container " style="width:20em; margin-top:0px;padding-bottom:10px;">
         @helper.form(routes.Application.createUser) {
-        <div class="control-group">
-            <!--<label class="control-label" for="email">Email Address</label>-->
-            <div class="controls">
-                <input type="text" id="email" name="email" placeholder="Email" value="@registerform("email").value">
-            </div>
-        </div>
-        <div class="control-group">
-            <!--<label class="control-label" for="password">Password</label>-->
-            <div class="controls">
-                <input type="password" id="password" name="password" placeholder="Password" value="@registerform("password").value">
-            </div>
-        </div>
-        <div class="control-group">
-            <!--<label class="control-label" for="password2">Password Again</label>-->
-            <div class="controls">
-                <input type="password" id="password2" name="password2" placeholder="Password Again">
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="username">(optional)</label>
-                <div class="controls">
-                    <input type="text" id="username" name="username" placeholder="Visible Name" value="@registerform("username").value">
-                </div>
-            </div>
-            <button type="submit" class="btn primary">Register</button>
-        </div>
+        @helper.inputText(registerform("email"), '_showConstraints -> false,'_label -> "",'placeholder->"Email")
+        @helper.inputPassword(registerform("password"),'_showConstraints -> false, '_label -> "",'placeholder->"Password")
+        @helper.inputPassword(registerform("password2"),'_showConstraints -> false, '_label -> "",'placeholder->"Password Again")
+        @helper.inputText(registerform("username"),'_showConstraints -> true, '_label -> "",'placeholder->"User Alias (optional)")
+        <button type="submit" class="btn primary">Register</button>
     </div>
-    }
-    <div class="row-fluid" align="center">
-        <h4>Existing users please <a href="/">Login</a></h4>
-    </div>
+</div>
+}
+<div class="row-fluid" align="center">
+    <h4>Existing users please <a href="/">Login</a></h4>
+</div>
 
 </div>
 </div>

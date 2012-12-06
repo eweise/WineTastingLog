@@ -43,10 +43,10 @@ object Tasting {
     }
   }
 
-  def load(id:Long) = DB.withConnection ( implicit c => (
+  def load(id: Long) = DB.withConnection(implicit c => (
     SQL( """select * from tasting where id = {tastingId}""")
-    .on('tastingId -> id)
-    .as(Tasting.simple.singleOpt)))
+      .on('tastingId -> id)
+      .as(Tasting.simple.singleOpt)))
 
   def list(userId: Long): Seq[Tasting] = {
     DB.withConnection {
@@ -60,7 +60,7 @@ object Tasting {
     }
   }
 
-  def trending : Seq[Tasting] = {
+  def trending: Seq[Tasting] = {
     DB.withConnection {
       implicit connection => {
         SQL(
@@ -108,12 +108,12 @@ object Tasting {
     "\"" + value + "\""
   }
 
-  def insert(tasting: Tasting):Long = {
-    var id:Long = 0
+  def insert(tasting: Tasting): Long = {
+    var id: Long = 0
 
     DB.withConnection {
       implicit connection => {
-        id = SQL("""select nextval('tasting_seq')""").apply().head[Long]("nextval")
+        id = SQL( """select nextval('tasting_seq')""").apply().head[Long]("nextval")
 
         println("insert user id = " + tasting.userId)
         SQL(
@@ -176,7 +176,7 @@ object Tasting {
 
 case class User(id: Pk[Long],
                 email: String,
-                username: String,
+                username: Option[String],
                 password: String,
                 createDate: Date = new Date(System.currentTimeMillis()),
                 var authToken: String = "") {
@@ -186,6 +186,7 @@ object User {
 
   val USER_ID = "userId"
   val USERNAME = "username"
+  val EMAIL = "email"
 
   /**
    * Parse a User from a ResultSet
@@ -193,7 +194,7 @@ object User {
   val simple = {
     get[Pk[Long]]("id") ~
       get[String]("email") ~
-      get[String]("username") ~
+      get[Option[String]]("username") ~
       get[String]("password") ~
       get[Date]("createDate") ~
       get[String]("token") map {
@@ -206,13 +207,10 @@ object User {
   /**
    * Retrieve a User from email.
    */
-  def findByUsername(username: String): Option[User] = {
-    println("username = " + username)
+  def findByEmail(email: String): Option[User] = {
     DB.withConnection {
       implicit connection =>
-        SQL("select * from users where username = {username}").on(
-          'username -> username
-        ).as(User.simple.singleOpt)
+        SQL("select * from users where email = {email}").on('email -> email).as(User.simple.singleOpt)
     }
   }
 
@@ -276,7 +274,7 @@ object User {
     }
   }
 
-  def insert(username: String, email: String, password: String) = {
+  def insert(username: Option[String], email: String, password: String) = {
     DB.withConnection {
       implicit connection =>
         SQL(

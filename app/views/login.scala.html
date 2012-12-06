@@ -1,6 +1,6 @@
 @(loginform: Form[(String,String)])(implicit flash: Flash, session:Session)
 
-@import helper._
+@import helper.twitterBootstrap._
 
 
 @index {
@@ -16,20 +16,8 @@
 <div class="row-fluid">
     <div class="form-container login-form" style="width:20em; margin-top:10px;padding-bottom:10px;">
         @helper.form(routes.Application.authenticate) {
-
-
-        <div class="control-group" style="margin-top:10px;">
-            <!--<label class="control-label" for="username">Email</label>-->
-            <div class="controls" >
-                <input type="text" id="username" name="username" placeholder="Username" value="@loginform(" username").value">
-            </div>
-        </div>
-        <div class="control-group">
-            <!--<label class="control-label" for="password">Password</label>-->
-            <div class="controls">
-                <input type="password" id="password" name="password" placeholder="Password">
-            </div>
-        </div>
+        @helper.inputText(loginform("email"), '_showConstraints -> false,'_label -> "",'placeholder->"Email")
+        @helper.inputPassword(loginform("password"),'_showConstraints -> false, '_label -> "",'placeholder->"Password")
         <div class="control-group">
             <div class="controls">
                 <button type="submit" class="btn primary">Login</button>

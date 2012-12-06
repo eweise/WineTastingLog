@@ -19,54 +19,37 @@ object Application extends Controller {
 
   val loginForm =
     Form(
-      of(
-        "username" -> text,
-        "password" -> text
-      ) verifying("Invalid username or password", result => result match {
-        case (username, password) => {
-          println("loginForm. authenticate")
-          User.authenticate(username, password).isDefined
-        }
-      })
+      tuple(
+        "email" -> email,
+        "password" -> nonEmptyText
+      ) verifying("Invalid username or password", t => User.authenticate(t._1, t._2).isDefined)
     )
 
   val registerForm = Form(
-    of(
-      "username" -> nonEmptyText,
-      "email" -> email,
-      "password" -> nonEmptyText,
+    tuple(
+      "username" -> optional(text),
+      "email" -> email.verifying("This email address already exists!", User.findByEmail(_).isEmpty),
+      "password" -> nonEmptyText(8),
       "password2" -> nonEmptyText
-    ) verifying("Not all parameters supplied", result => result match {
-      case (username, email, password, password2) => {
-        if (!User.findByUsername(username).isEmpty) {
-          false
-        }
-        true
-      }
-    })
+    ) verifying("Password do not match", reg => reg._3 == reg._4)
   )
 
 
   def login = Action {
     implicit request =>
-      request.session.get(User.USER_ID) match {
+      request.session.get(User.EMAIL) match {
         case None => Ok(html.login(loginForm))
-        case _ => {
-          Redirect(routes.Tastings.tastings)
-        }
+        case _ => Redirect(routes.Tastings.tastings)
       }
   }
 
-  /**
-   * Handle login form submission.
-   */
   def authenticate = Action {
     implicit request =>
       loginForm.bindFromRequest.fold(
         formWithErrors => BadRequest(html.login(formWithErrors)),
         user => {
-          val dbUser = User.findByUsername(user._1).get
-          Redirect(routes.Tastings.tastings).withSession(User.USERNAME -> dbUser.username, User.USER_ID -> dbUser.id.get.toString)
+          val dbUser = User.findByEmail(user._1).get
+          Redirect(routes.Tastings.tastings).withSession(User.USERNAME -> dbUser.username.getOrElse(""), User.USER_ID -> dbUser.id.get.toString)
         }
       )
   }
@@ -78,7 +61,7 @@ object Application extends Controller {
         formWithErrors => {
           BadRequest("Invalid email or password")
         }, userForm => {
-          var dbUser = User.findByUsername(userForm._1)
+          var dbUser = User.findByEmail(userForm._1)
           dbUser.get.authToken = UUID.randomUUID().toString
           User.update(dbUser.get)
           Ok(dbUser.get.authToken)
@@ -98,10 +81,10 @@ object Application extends Controller {
       },
         user => {
           User.insert(user._1, user._2, user._3)
-          val newUser = User.findByUsername(user._1)
+          val newUser = User.findByEmail(user._2)
           (Redirect(routes.Tastings.tastings).withSession(
             User.USER_ID -> newUser.get.id.toString,
-            User.USERNAME -> newUser.get.username))
+            User.USERNAME -> newUser.get.username.getOrElse("")))
         }
       )
   }

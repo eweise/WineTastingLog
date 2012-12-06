@@ -148,11 +148,11 @@ body {background-image: -ms-linear-gradient(bottom, #FFFFFF 0%, #D1AEEF 100%);}
 
 /* Mozilla Firefox */
 body {
-background-image: -moz-linear-gradient(top left, #FFFFFF 0%, #5D9659 100%);
+background-image: -moz-linear-gradient(top left, #FFFFFF 0%, #707070 100%);
 }
 
 div .form-container {
-background-image: -moz-linear-gradient(top left, #FFFFFF 0%, #0A3B07 200%);
+background-image: -moz-linear-gradient(top left, #FFFFFF 0%, black 200%);
 }
 
 /* Opera */
