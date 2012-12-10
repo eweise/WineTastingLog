@@ -5,20 +5,8 @@ import org.apache.commons.io.FileUtils
 
 object Image {
 
-  def write(id: String, image: Array[Byte]) {
-    FileUtils.writeByteArrayToFile(new File(id + ".jpg"), image)
-  }
+  def location(userId:String, tastingId:String) = "public/images/user/" + userId + "/image" + tastingId
 
-  def read(id: String): Option[Array[Byte]] = {
-    val f = new File(id + ".jpg")
-    f.exists() match {
-      case false => {
-        println("no image found for file " + f)
-        None
-      }
-      case _ =>
-        Some(FileUtils.readFileToByteArray(f))
-    }
-  }
+  def assetLoc(userId:String, tastingId:String) = "/assets/images/user/" + userId + "/image" + tastingId
 
 }

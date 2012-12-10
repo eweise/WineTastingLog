@@ -21,11 +21,11 @@
             }
             @if(!tastings.isEmpty) {
                 @tastings.map { tasting =>
-                <li style="height:300px">
-                    <a href="tasting/@tasting.id" class="thumbnail plain"  style="background:white">
-                        <img class="img-rounded" src="/assets/images/user/image_@tasting.id" alt="" width="300"/>
+                <li >
+                    <a href="tasting/@tasting.id" class="thumbnail plain"  style="background:white" >
+                        <img class="img-rounded" src="@Image.assetLoc(session.get(User.USER_ID).get, tasting.id.toString)" alt="" width="400"/>
                         <div style="margin-bottom:40px"><h4 align="left">@tasting.year @tasting.brand @tasting.style</h4>
-                            @rating(Some(tasting.id.get.toString), tasting.rating.getOrElse(0).toString)
+                            <div style="float:left">@rating(Some(tasting.id.get.toString), tasting.rating.getOrElse(0).toString)</div>
                         </div>
                     </a>
                 </li>
@@ -42,10 +42,9 @@
                 <li><a href="#">@tasting.year @tasting.brand @tasting.style</a></li>
                 }
                 <li class="nav-header"><h4>Recent Member Entries</h4></li>
-                <li><a href="#">Sutter Home 2011 Cabernet 4 Stars </a></li>
-                <li><a href="#">Saxum 2007 Cabernet 3 Stars </a></li>
-                <li><a href="#">Paul Hobbs 2011 Chardonney 3 Stars </a></li>
-                <li><a href="#">Fontodi 2011 Cabernet 4 Stars </a></li>
+                @Tasting.mostRecent.map{ tasting =>
+                <li><a href="#">@tasting.year @tasting.brand @tasting.style</a></li>
+                }
             </ul>
         </div>
     </div>

@@ -49,7 +49,7 @@ object Application extends Controller {
         formWithErrors => BadRequest(html.login(formWithErrors)),
         user => {
           val dbUser = User.findByEmail(user._1).get
-          Redirect(routes.Tastings.tastings).withSession(User.USERNAME -> dbUser.username.getOrElse(""), User.USER_ID -> dbUser.id.get.toString)
+          Redirect(routes.Tastings.tastings).withSession(User.EMAIL -> dbUser.email, User.USER_ID -> dbUser.id.get.toString)
         }
       )
   }
@@ -69,7 +69,7 @@ object Application extends Controller {
           val newUser = User.findByEmail(user._2)
           (Redirect(routes.Tastings.tastings).withSession(
             User.USER_ID -> newUser.get.id.toString,
-            User.USERNAME -> newUser.get.username.getOrElse("")))
+            User.EMAIL -> newUser.get.email))
         }
       )
   }

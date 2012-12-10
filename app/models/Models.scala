@@ -17,7 +17,7 @@ case class Tasting(
                     style: Option[String],
                     region: Option[String],
                     year: Option[Int],
-                    updateDate: Option[Date]) {
+                    updateDate: Option[Date] ) {
 
   def notesSmall = {
     notes match {
@@ -65,12 +65,26 @@ object Tasting {
       implicit connection => {
         SQL(
           """
-            select * from tasting limit 5
+            select * from tasting order by updatedate asc limit 5
           """
         ).as(Tasting.simple *)
       }
     }
   }
+
+  def mostRecent: Seq[Tasting] = {
+    DB.withConnection {
+      implicit connection => {
+        SQL(
+          """
+            select * from tasting order by updatedate asc limit 5
+          """
+        ).as(Tasting.simple *)
+      }
+    }
+  }
+
+
 
   // todo replace with Json library
   def listAsJson(userId: Long) = {
@@ -131,7 +145,7 @@ object Tasting {
           'style -> tasting.style,
           'region -> tasting.region,
           'year -> tasting.year,
-          'updateDate -> tasting.updateDate
+          'updateDate -> new Date()
         ).executeUpdate()
       }
     }
@@ -157,7 +171,7 @@ object Tasting {
           'style -> tasting.style,
           'region -> tasting.region,
           'year -> tasting.year,
-          'updateDate -> tasting.updateDate
+          'updateDate -> new Date()
         ).executeUpdate()
     }
   }

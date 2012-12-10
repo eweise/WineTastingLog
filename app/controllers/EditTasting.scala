@@ -2,7 +2,7 @@ package controllers
 
 import play.api.mvc.{Action, Controller}
 import play.api.data.Form
-import models.{User, Tasting}
+import models.{Image, User, Tasting}
 import play.api.data.Forms._
 import anorm.{Pk, NotAssigned}
 import views.html
@@ -39,54 +39,42 @@ object EditTasting extends Controller {
       Ok(html.editTastings(None, tastingForm))
   }
 
-  def saveNew = Action {
+  def saveNew = Action(parse.multipartFormData) {
     implicit request =>
+      var tastingId = 0L
       tastingForm.bindFromRequest.fold(
         formWithErrors => BadRequest(html.editTastings(None, formWithErrors)),
         tasting => {
-          println("tasting rating = " + tasting.rating)
           tasting.userId = Some(request.session.get(User.USER_ID).get.toInt)
-          Tasting.insert(tasting)
-          Redirect(routes.Application.login)
+          tastingId = Tasting.insert(tasting)
         }
       )
+      request.body.file("image").map {
+        file =>
+          val userId = request.session.get(User.USER_ID).get
+          file.ref.moveTo(new File(Image.location(userId, tastingId.toString)), true)
+      }
+      Redirect(routes.Tastings.tastings)
   }
 
   def update(id: Long) = Action(parse.multipartFormData) {
     implicit request =>
       request.body.file("image").map {
         file =>
-          file.ref.moveTo(new File("public/images/user/image_" + id), true)
+          val userId = request.session.get(User.USER_ID)
+          file.ref.moveTo(new File(Image.location(userId.get, id.toString)), true)
       }
 
       tastingForm.bindFromRequest.fold(
         formWithErrors => BadRequest(html.editTastings(Some(id), formWithErrors)),
         tasting => {
-          tasting.userId = Some(request.session.get(User.USER_ID).get.toInt)
+          tasting.userId = Some(request.session.get(User.USER_ID).get.toLong)
           Tasting.update(id, tasting)
           Ok(html.tastings(Tasting.list(request.session.get(User.USER_ID).get.toInt))(request.session))
-          Redirect(routes.Application.login)
+          Redirect(routes.Tastings.tastings)
         }
 
       )
-  }
-
-  def upload() = Action(parse.multipartFormData) {
-    implicit request =>
-      val form = Form(tuple(
-        "id" -> nonEmptyText,
-        "image" -> ignored(request.body.file("image")).verifying("File missing", _.isDefined)))
-
-      form.bindFromRequest.fold(formWithErrors => {
-        Ok(html.tastings(Tasting.list(request.session.get(User.USER_ID).get.toInt))(request.session))
-      },
-        value => {
-          request.body.file("image").map {
-            file =>
-              file.ref.moveTo(new File("public/images/user/image_" + value._1), true)
-              Ok(html.tastings(Tasting.list(request.session.get(User.USER_ID).get.toInt))(request.session))
-          }.getOrElse(BadRequest("File missing!"))
-        })
   }
 
 }
