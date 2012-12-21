@@ -13,8 +13,10 @@ object ApplicationBuild extends Build {
 
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
 
-    libraryDependencies ++= Seq("postgresql" % "postgresql" % "9.1-901-1.jdbc4" , "commons-io" % "commons-io" % "2.1")
-
+    libraryDependencies ++= Seq(
+      "postgresql" % "postgresql" % "9.1-901-1.jdbc4" ,
+      "commons-io" % "commons-io" % "2.1",
+      "com.amazonaws" % "aws-java-sdk" % "1.3.26")
 
   )
 

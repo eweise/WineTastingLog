@@ -19,8 +19,9 @@ brand varchar(255),
 style varchar(255),
 region varchar(255),
 year integer,
+filename varchar(255),
 updateDate date,
-picture text,
+comment text,
 constraint pk_tasting primary key (id));
 
 insert into tasting(id, userId, rating, notes, brand, style, region, year) values(1, 1, 3, 'nice nose', 'Gallo', 'Chardonney','Napa', 1997);
