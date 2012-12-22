@@ -25,19 +25,11 @@ class S3File(val userId:Long, val filename:String)  {
       val putObjectRequest = new PutObjectRequest(S3Plugin.bucketName, filePath, file)
       putObjectRequest.withCannedAcl(CannedAccessControlList.PublicRead) // public for all
       putObjectRequest.setMetadata(metadata)
-      S3Plugin.amazonS3.putObject(putObjectRequest) // upload file
+      S3Plugin.amazonS3.putObject(putObjectRequest)
     }
   }
 
-  def delete() {
-    if (S3Plugin.amazonS3 == null) {
-      Logger.error("Could not delete because amazonS3 was null")
-      throw new RuntimeException("Could not delete")
-    }
-    else {
-      S3Plugin.amazonS3.deleteObject(S3Plugin.bucketName, filename)
-    }
-  }
+  def delete():Unit =S3Plugin.amazonS3.deleteObject(S3Plugin.bucketName, filePath)
 }
 
 object S3File {

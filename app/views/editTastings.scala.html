@@ -46,9 +46,9 @@
                 <input type="file" accept="image/*" name="image"/>
             </div>
             <div class="row-fluid" >
-            <img id="tasting-image" style="border:solid; border-width:2px;border-color:gray;" class="img-rounded">
+            <img id="tasting-image" style="border:solid; border-width:2px;border-color:gray;" class="img-rounded"
             @if(id==None) {src="/assets/images/notavailable.jpeg"
-            } else {src="@Image.assetLoc(session.get(User.USER_ID).get, id.get.toString)" } alt="">
+                } else {src="@S3File(session.get(User.USER_ID).get.toLong, id.get.toString).getUrl" } alt="">
             </div>
         </div>
     </div>

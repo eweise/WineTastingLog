@@ -28,7 +28,9 @@ object EditTasting extends Controller {
     )(Tasting.apply)(Tasting.unapply)
   )
 
-  def delete(id: Long) = Action {
+  def delete(id: Long) = Action { request =>
+    val userId = Some(request.session.get(User.USER_ID).get.toLong)
+    new S3File(userId.get, id.toString).delete()
     Tasting.delete(id)
     Redirect(routes.Tastings.tastings)
   }
@@ -43,7 +45,7 @@ object EditTasting extends Controller {
       Ok(html.editTastings(None, tastingForm))
   }
 
-  def saveNew = Action(parse.maxLength(300000, parse.multipartFormData)) {
+  def saveNew = Action(parse.maxLength(5000000, parse.multipartFormData)) {
     implicit request =>
       var tastingId = 0L
       val userId = Some(request.session.get(User.USER_ID).get.toLong)
@@ -67,14 +69,19 @@ object EditTasting extends Controller {
       Redirect(routes.Tastings.tastings)
   }
 
-  def update(id: Long) = Action(parse.multipartFormData) {
+  def update(id: Long) = Action(parse.maxLength(3000000, parse.multipartFormData)) {
     implicit request =>
-      request.body.file("image").map {
-        file =>
-          val userId = request.session.get(User.USER_ID)
-          file.ref.moveTo(new File(Image.location(userId.get, id.toString)), true)
+      request.body match {
+        case Left(error) => EntityTooLarge("Request to big")
+        case Right(body) => {
+          val fileOption = body.file("image")
+          fileOption.map {
+            file =>
+              val userId = Some(request.session.get(User.USER_ID).get.toLong)
+              new S3File(userId.get, id.toString).save(file.ref.file)
+          }
+        }
       }
-
       tastingForm.bindFromRequest.fold(
         formWithErrors => BadRequest(html.editTastings(Some(id), formWithErrors)),
         tasting => {
