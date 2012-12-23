@@ -14,7 +14,6 @@
             @if(tastings.isEmpty) {
              <li>
                  <a href="tasting" class="thumbnail plain">
-                     <img class="img-rounded" src="assets/images/user/" alt="" height="350" width="325">
                      <h4>New Tasting</h4>
                  </a>
              </li>
@@ -23,7 +22,7 @@
                 @tastings.map { tasting =>
                 <li >
                     <a href="tasting/@tasting.id" class="thumbnail plain"  style="background:white" >
-                        <img class="img-rounded" src="@S3File(tasting.userId.get, tasting.id.toString).getUrl" alt="" width="400"/>
+                        <img class="img-rounded" src="@S3File(tasting.userId.get, tasting.id.toString).getUrl" alt="" width="370"/>
                         <div style="margin-bottom:40px"><h4 align="left">@tasting.year @tasting.brand @tasting.style</h4>
                             <div style="float:left">@rating(Some(tasting.id.get.toString), tasting.rating.getOrElse(0).toString)</div>
                         </div>
