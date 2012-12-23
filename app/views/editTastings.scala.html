@@ -11,8 +11,8 @@
     </h2>
 </div>
 
-<div class="row-fluid">
-    <div class="span4">
+<div class="row-fluid" style="margin-bottom:50px">
+    <div class="span6">
         @helper.form(if(id == None) routes.EditTasting.saveNew() else routes.EditTasting.update(id.get), 'id ->
         "tasting-form", 'enctype -> "multipart/form-data") {
         <div class="form-container" style="max-width:350px;min-width:150px;margin-top:0px">
@@ -40,7 +40,7 @@
             </div>
         </div>
     </div>
-    <div class="span8">
+    <div class="span6">
         <div style="margin-top:0px">
             <div class="row-fluid">
                 <input type="file" accept="image/*" name="image"/>
