@@ -166,7 +166,7 @@ object Tasting {
           'id -> id,
           'rating -> tasting.rating,
           'notes -> tasting.notes,
-          'brand -> tasting.brand.get,
+          'brand -> tasting.brand,
           'style -> tasting.style,
           'region -> tasting.region,
           'year -> tasting.year,
