@@ -22,7 +22,7 @@
                 @tastings.map { tasting =>
                 <li >
                     <a href="tasting/@tasting.id" class="thumbnail plain"  style="background:white" >
-                        <img class="img-rounded" src="@S3File(tasting.userId.get, tasting.id.toString).getUrl" alt="" width="370"/>
+                        <img class="img-rounded" src="@S3File(tasting.userId.get, tasting.id.toString).getUrl" alt="" width="300"/>
                         <div style="margin-bottom:40px"><h4 align="left">@tasting.year @tasting.brand @tasting.style</h4>
                             <div style="float:left">@rating(Some(tasting.id.get.toString), tasting.rating.getOrElse(0).toString)</div>
                         </div>
