@@ -17,7 +17,6 @@ case class Tasting(
                     style: Option[String],
                     region: Option[String],
                     year: Option[Int],
-                    filename:Option[String],
                     updateDate: Option[Date] ) {
 
   def notesSmall = {
@@ -39,9 +38,8 @@ object Tasting {
       get[Option[String]]("style") ~
       get[Option[String]]("region") ~
       get[Option[Int]]("year") ~
-      get[Option[String]]("filename") ~
       get[Option[Date]]("updateDate") map {
-      case id ~ userId ~ rating ~ notes ~ brand ~ style ~ region ~ year ~ filename ~ updateDate => Tasting(id, userId, rating, notes, brand, style, region, year, filename, updateDate)
+      case id ~ userId ~ rating ~ notes ~ brand ~ style ~ region ~ year ~  updateDate => Tasting(id, userId, rating, notes, brand, style, region, year, updateDate)
     }
   }
 
@@ -94,7 +92,7 @@ object Tasting {
     val tastings = for (tasting <- list(userId)) yield {
       "{" +
         kv("id", tasting.id.getOrElse("")) + "," +
-        kv("brand", tasting.brand.getOrElse("")) + "," +
+        kv("brand", tasting.brand) + "," +
         kv("rating", tasting.rating.getOrElse("")) + "," +
         kv("style", tasting.style.getOrElse("")) + "," +
         kv("region", tasting.region.getOrElse("")) + "," +
@@ -162,14 +160,13 @@ object Tasting {
           """
             update tasting
             set rating = {rating}, notes = {notes}, brand = {brand}, style = {style}, region = {region}, year = {year}, updateDate = {updateDate}
-            where id = {id} and userId = {userId}
+            where id = {id}
           """
         ).on(
           'id -> id,
-          'userId -> tasting.userId,
           'rating -> tasting.rating,
           'notes -> tasting.notes,
-          'brand -> tasting.brand,
+          'brand -> tasting.brand.get,
           'style -> tasting.style,
           'region -> tasting.region,
           'year -> tasting.year,

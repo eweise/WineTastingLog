@@ -19,7 +19,6 @@ brand varchar(255),
 style varchar(255),
 region varchar(255),
 year integer,
-filename varchar(255),
 updateDate date,
 comment text,
 constraint pk_tasting primary key (id));
