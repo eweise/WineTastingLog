@@ -85,9 +85,9 @@ object Tasting {
     }
   }
 
-  def attributeListTuples(field:String):Seq[(String, String)] = attributeList(field).map(value => (value.toString, value.toString))
+  def attributeListTuples(field:String)(implicit userId:Long):Seq[(String, String)] = attributeList(field).map(value => (value.toString, value.toString))
 
-  def attributeList(field: String) = field.toLowerCase match {
+  def attributeList(field: String)(implicit userId:Long) = field.toLowerCase match {
     case "region" => distinctTasting("region")
     case "style" => distinctTasting("style")
     case "brand" => distinctTasting("brand")
@@ -95,22 +95,24 @@ object Tasting {
     case _ => List()
   }
 
-  def year = {
+  def year(implicit userId:Long) = {
     DB.withConnection {
       implicit connection => {
-        SQL(<s>select distinct year from tasting where year is not null order by year desc</s>.text).as(int("year") *)
+        SQL(<s>select distinct year from tasting where year is not null and userid = {userId} order by year desc</s>.text).as(int("year") *)
       }
     }
   }
 
-  def distinctTasting(field: String): List[String] =
+  def distinctTasting(field: String)(implicit userId:Long): List[String] =
     DB.withConnection {
       implicit connection => {
         SQL(<s>select distinct
           {field}
           from tasting where
           {field}
-          is not null order by
+          is not null
+          and userid = {userId}
+          order by
           {field}
           asc</s>.text).as(str(field) *)
       }

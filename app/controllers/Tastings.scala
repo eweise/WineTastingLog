@@ -34,7 +34,7 @@ object Tastings extends Controller {
         request.session.get(User.USER_ID) match {
           case None => Redirect(routes.Application.login())
           case _ => {
-            var tastings = Tasting.list(request.session.get(User.USER_ID).get.toInt)
+            var tastings = Tasting.list(request.session.get(User.USER_ID).get.toLong)
             tastings = tastings.filter {
               t =>
                 val hasBrand = result._1.foldLeft(true)((a,b) => Some(b) == t.brand)
