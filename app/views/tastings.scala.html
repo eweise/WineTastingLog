@@ -1,43 +1,82 @@
-@(tastings: Seq[Tasting])(implicit session:Session)
+
+@(tastings: Seq[Tasting], filterForm:Form[(Option[String], Option[String], Option[String], Option[Int])])(implicit session:Session)
 
 @import helper._
 @import tags._
 
+
 @implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.render) }
 
 @main {
+<div class="row-fluid">
+    <div class="span12">
 
+        @helper.form(routes.Tastings.tastings, 'id -> "filterForm") {
+        <div class="dropdown">
+            <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Filter</a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="padding:10px">
+                <li>@select(field = filterForm("region"), options = Tasting.attributeListTuples("region"), '_default -> "")</li>
+                <li>@select(field = filterForm("style"), options = Tasting.attributeListTuples("style"), '_default -> "",'_label -> "Style")</li>
+                <li>@select(field = filterForm("brand"), options = Tasting.attributeListTuples("brand"), '_default -> "")</li>
+                <li>@select(field = filterForm("year"), options = Tasting.attributeListTuples("year"), '_default -> "")</li>
+                <li>
+                    <div class="btn-group">
+                        <button class="btn btn-primary">Find</button>
+                        <a href="@routes.Tastings.tastings" class="btn btn-secondary" >Clear</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        }
+
+
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+            <li><a tabindex="-1" href="#">Action</a></li>
+            <li><a tabindex="-1" href="#">Another action</a></li>
+            <li><a tabindex="-1" href="#">Something else here</a></li>
+            <li class="divider"></li>
+            <li><a tabindex="-1" href="#">Separated link</a></li>
+        </ul>
+
+
+    </div>
 <div class="row-fluid" style="margin-top: 30px">
     <div class=" content span9">
         <div>
-        <ul class="thumbnails">
-            @if(tastings.isEmpty) {
-             <li>
-                 <a href="tasting" class="thumbnail plain">
-                     <h4>New Tasting</h4>
-                 </a>
-             </li>
-            }
-            @if(!tastings.isEmpty) {
+            <ul class="thumbnails">
+                @if(tastings.isEmpty) {
+                <li>
+                    <a href="tasting" class="thumbnail plain">
+                        <h4>New Tasting</h4>
+                    </a>
+                </li>
+                }
+                @if(!tastings.isEmpty) {
                 @tastings.map { tasting =>
-                <li >
-                    <a href="tasting/@tasting.id" class="thumbnail plain"  style="background:white" >
-                        <img class="img-rounded" src="@S3File(tasting.userId.get, tasting.id.toString).getUrl" alt="" width="300"/>
-                        <div style="margin-bottom:40px"><h4 align="left">@tasting.year @tasting.brand @tasting.style</h4>
-                            <div style="float:left">@rating(Some(tasting.id.get.toString), tasting.rating.getOrElse(0).toString)</div>
+                <li>
+                    <a href="tasting/@tasting.id" class="thumbnail plain" style="background:white">
+                        <img class="img-rounded" src="@S3File(tasting.userId.get, tasting.id.toString).getUrl" alt=""
+                             width="300"/>
+
+                        <div style="margin-bottom:40px"><h4 align="left">@tasting.year @tasting.brand
+                            @tasting.style</h4>
+
+                            <div style="float:left">@rating(Some(tasting.id.get.toString),
+                                tasting.rating.getOrElse(0).toString)
+                            </div>
                         </div>
                     </a>
                 </li>
                 }
-            }
-        </ul>
+                }
+            </ul>
         </div>
     </div>
     <div class="span3">
         <div class="well sidebar-nav">
             <ul class="nav nav-list">
                 <li class="nav-header"><h4>Trending Wines</h4></li>
-                 @Tasting.trending.map{ tasting =>
+                @Tasting.trending.map{ tasting =>
                 <li><a href="#">@tasting.year @tasting.brand @tasting.style</a></li>
                 }
                 <li class="nav-header"><h4>Recent Member Entries</h4></li>

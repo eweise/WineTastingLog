@@ -2690,7 +2690,7 @@ table .span24 {
 }
 
 .dropdown-menu a {
-  display: block;
+  /*display: block;*/
   padding: 3px 20px;
   clear: both;
   font-weight: normal;

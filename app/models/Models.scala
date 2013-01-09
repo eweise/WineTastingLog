@@ -6,6 +6,7 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 import java.util.{UUID, Date}
+import java.util
 
 
 case class Tasting(
@@ -17,7 +18,7 @@ case class Tasting(
                     style: Option[String],
                     region: Option[String],
                     year: Option[Int],
-                    updateDate: Option[Date] ) {
+                    updateDate: Option[Date]) {
 
   def notesSmall = {
     notes match {
@@ -39,7 +40,7 @@ object Tasting {
       get[Option[String]]("region") ~
       get[Option[Int]]("year") ~
       get[Option[Date]]("updateDate") map {
-      case id ~ userId ~ rating ~ notes ~ brand ~ style ~ region ~ year ~  updateDate => Tasting(id, userId, rating, notes, brand, style, region, year, updateDate)
+      case id ~ userId ~ rating ~ notes ~ brand ~ style ~ region ~ year ~ updateDate => Tasting(id, userId, rating, notes, brand, style, region, year, updateDate)
     }
   }
 
@@ -84,7 +85,36 @@ object Tasting {
     }
   }
 
+  def attributeListTuples(field:String):Seq[(String, String)] = attributeList(field).map(value => (value.toString, value.toString))
 
+  def attributeList(field: String) = field.toLowerCase match {
+    case "region" => distinctTasting("region")
+    case "style" => distinctTasting("style")
+    case "brand" => distinctTasting("brand")
+    case "year" => year
+    case _ => List()
+  }
+
+  def year = {
+    DB.withConnection {
+      implicit connection => {
+        SQL(<s>select distinct year from tasting where year is not null order by year desc</s>.text).as(int("year") *)
+      }
+    }
+  }
+
+  def distinctTasting(field: String): List[String] =
+    DB.withConnection {
+      implicit connection => {
+        SQL(<s>select distinct
+          {field}
+          from tasting where
+          {field}
+          is not null order by
+          {field}
+          asc</s>.text).as(str(field) *)
+      }
+    }
 
   // todo replace with Json library
   def listAsJson(userId: Long) = {
