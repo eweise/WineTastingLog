@@ -1,6 +1,6 @@
 @(id:Option[String], value:String, title:Option[String] = None)
 <fieldset class="rating">
-    @if(title.isDefined) { @title.get}
+    @if(title.isDefined) { <strong>@title.get</strong>}
     <input type="radio" id="star5" @if(value == "5"){checked} name="rating@id.getOrElse("")" value="5" /><label for="star5" title="Rocks!"></label>
     <input type="radio" id="star4" @if(value == "4"){checked} name="rating@id.getOrElse("")" value="4" /><label for="star4" title="Pretty good"></label>
     <input type="radio" id="star3" @if(value == "3"){checked} name="rating@id.getOrElse("")" value="3" /><label for="star3" title="Meh"></label>

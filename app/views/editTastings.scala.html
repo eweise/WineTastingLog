@@ -7,7 +7,7 @@
 @main {
 
 <div class="page-header">
-    <h2>Wine Tasting
+    <h2 style="color:white;margin-top:10px;">Wine Tasting
     </h2>
 </div>
 
@@ -41,15 +41,16 @@
         </div>
     </div>
     <div class="span6">
-        <div style="margin-top:0px">
-            <div class="row-fluid">
-                <input type="file" accept="image/*" name="image"/>
-            </div>
-            <div class="row-fluid" >
-            <img id="tasting-image" style="border:solid; border-width:2px;border-color:gray;" class="img-rounded"
-            @if(id==None) {src="/assets/images/notavailable.jpeg"
-                } else {src="@S3File(session.get(User.USER_ID).get.toLong, id.get.toString).getUrl" } alt="">
-            </div>
+        <div style="margin-top:0px;background-color:rgba(200, 240, 150, 0.8);border-radius: 0.8em 0.8em 0.8em 0.8em;padding: 2%;">
+                <h4 style="color:black;">Upload Image</h4>
+                <div class="row-fluid">
+                    <input type="file" accept="image/*" name="image"/>
+                </div>
+                <div class="row-fluid">
+                    <img id="tasting-image" style="border:solid; border-width:2px;border-color:gray;"
+                         class="img-rounded"
+                    @if(id!=None) {src="@S3File(session.get(User.USER_ID).get.toLong, id.get.toString).getUrl" } alt="">
+                </div>
         </div>
     </div>
     }
