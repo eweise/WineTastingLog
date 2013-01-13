@@ -49,7 +49,7 @@ object Tasting {
       .on('tastingId -> id)
       .as(Tasting.simple.singleOpt)))
 
-  def list(userId: Long): Seq[Tasting] = {
+  def list(implicit userId: Long): Seq[Tasting] = {
     DB.withConnection {
       implicit connection => {
         SQL(
