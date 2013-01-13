@@ -5,9 +5,6 @@ import com.amazonaws.services.s3.{AmazonS3Client, AmazonS3}
 import play.api.Logger
 import com.amazonaws.auth.BasicAWSCredentials
 
-/**
- * An example Play 2 plugin written in Scala.
- */
 class S3Plugin(var application: Application) extends Plugin {
   val AWS_S3_BUCKET = "aws.s3.bucket"
   val AWS_ACCESS_KEY = "aws.access.key"
@@ -27,10 +24,7 @@ class S3Plugin(var application: Application) extends Plugin {
       Logger.info("Using S3 Bucket: " + S3Plugin.bucketName)
     }
 
-
     Logger.info("S3Plugin has started")
-
-
   }
 
   override def onStop() {
