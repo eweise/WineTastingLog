@@ -37,9 +37,9 @@ object Tasting {
     }
   }
 
-  def load(id: Long) = DB.withConnection(implicit c => (
+  def load(id: Long) = DB.withConnection(implicit c =>
     SQL("select * from tasting where id = {tastingId}").on('tastingId -> id).as(Tasting.simple.singleOpt))
-  )
+
 
   def list(implicit userId: Long): Seq[Tasting] =
     DB.withConnection(implicit c => SQL("select * from tasting where userId = {userId} order by id").on('userId -> userId).as(Tasting.simple *))
