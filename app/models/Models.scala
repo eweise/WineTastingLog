@@ -19,13 +19,6 @@ case class Tasting(
                     region: Option[String],
                     year: Option[Int],
                     updateDate: Option[Date]) {
-
-  def notesSmall = {
-    notes match {
-      case None => ""
-      case _ => if (notes.get.size > 15) notes.get.substring(0, 15) + "..." else notes.get
-    }
-  }
 }
 
 object Tasting {
@@ -45,49 +38,23 @@ object Tasting {
   }
 
   def load(id: Long) = DB.withConnection(implicit c => (
-    SQL( """select * from tasting where id = {tastingId}""")
-      .on('tastingId -> id)
-      .as(Tasting.simple.singleOpt)))
+    SQL("select * from tasting where id = {tastingId}").on('tastingId -> id).as(Tasting.simple.singleOpt))
+  )
 
-  def list(implicit userId: Long): Seq[Tasting] = {
-    DB.withConnection {
-      implicit connection => {
-        SQL(
-          """
-            select * from tasting where userId = {userId} order by id
-          """
-        ).on('userId -> userId).as(Tasting.simple *)
-      }
-    }
-  }
+  def list(implicit userId: Long): Seq[Tasting] =
+    DB.withConnection(implicit c => SQL("select * from tasting where userId = {userId} order by id").on('userId -> userId).as(Tasting.simple *))
 
-  def trending: Seq[Tasting] = {
-    DB.withConnection {
-      implicit connection => {
-        SQL(
-          """
-            select * from tasting order by updatedate asc limit 5
-          """
-        ).as(Tasting.simple *)
-      }
-    }
-  }
 
-  def mostRecent: Seq[Tasting] = {
-    DB.withConnection {
-      implicit connection => {
-        SQL(
-          """
-            select * from tasting order by updatedate asc limit 5
-          """
-        ).as(Tasting.simple *)
-      }
-    }
-  }
+  def trending: Seq[Tasting] =
+    DB.withConnection(implicit c => SQL("select * from tasting order by updatedate asc limit 5").as(Tasting.simple *))
 
-  def attributeListTuples(field:String)(implicit userId:Long):Seq[(String, String)] = attributeList(field).map(value => (value.toString, value.toString))
 
-  def attributeList(field: String)(implicit userId:Long) = field.toLowerCase match {
+  def mostRecent: Seq[Tasting] =
+    DB.withConnection(implicit connection => SQL("select * from tasting order by updatedate asc limit 5").as(Tasting.simple *))
+
+  def attributeListTuples(field: String)(implicit userId: Long): Seq[(String, String)] = attributeList(field).map(value => (value.toString, value.toString))
+
+  def attributeList(field: String)(implicit userId: Long) = field.toLowerCase match {
     case "region" => distinctTasting("region")
     case "style" => distinctTasting("style")
     case "brand" => distinctTasting("brand")
@@ -95,73 +62,37 @@ object Tasting {
     case _ => List()
   }
 
-  def year(implicit userId:Long) = {
+  def year(implicit userId: Long) = {
     DB.withConnection {
       implicit connection => {
-        SQL(<s>select distinct year from tasting where year is not null and userid = {userId} order by year desc</s>.text).as(int("year") *)
+        SQL(<s>select distinct year from tasting where year is not null and userid =
+          {userId}
+          order by year desc</s>.text).as(int("year") *)
       }
     }
   }
 
-  def distinctTasting(field: String)(implicit userId:Long): List[String] =
-    DB.withConnection {
-      implicit connection => {
-        SQL(<s>select distinct
-          {field}
-          from tasting where
-          {field}
-          is not null
-          and userid = {userId}
-          order by
-          {field}
-          asc</s>.text).as(str(field) *)
-      }
-    }
-
-  // todo replace with Json library
-  def listAsJson(userId: Long) = {
-
-    val tastings = for (tasting <- list(userId)) yield {
-      "{" +
-        kv("id", tasting.id.getOrElse("")) + "," +
-        kv("brand", tasting.brand) + "," +
-        kv("rating", tasting.rating.getOrElse("")) + "," +
-        kv("style", tasting.style.getOrElse("")) + "," +
-        kv("region", tasting.region.getOrElse("")) + "," +
-        kv("year", tasting.year.getOrElse("")) + "," +
-        kv("notes", tasting.notes.getOrElse("")) +
-        "}"
-    }
-    val result = "{\"tastings\":[" + commaDelimit(tastings) + "]}"
-    println("tasting json = " + result)
-    result
-  }
-
-  def commaDelimit(seq: Seq[String]) = {
-    if (seq.size > 0) {
-      seq.reduceLeft((acc, result) => acc + "," + result)
-    }
-    else {
-      None
-    }
-  }
-
-  def kv(key: String, value: Any) = {
-    quote(key) + ":" + quote(value)
-  }
-
-  def quote(value: Any) = {
-    "\"" + value + "\""
-  }
+  def distinctTasting(field: String)(implicit userId: Long): List[String] =
+    DB.withConnection(implicit connection => {
+      SQL(<s>select distinct
+        {field}
+        from tasting where
+        {field}
+        is not null and userid =
+        {userId}
+        order by
+        {field}
+        asc</s>.text)
+        .as(str(field) *)
+    })
 
   def insert(tasting: Tasting): Long = {
     var id: Long = 0
 
     DB.withConnection {
       implicit connection => {
-        id = SQL( """select nextval('tasting_seq')""").apply().head[Long]("nextval")
+        id = SQL("select nextval('tasting_seq')").apply().head[Long]("nextval")
 
-        println("insert user id = " + tasting.userId)
         SQL(
           """
             insert into tasting(id, userId, rating, notes, brand, style, region, year, updateDate) values ({id},
@@ -185,7 +116,7 @@ object Tasting {
   }
 
 
-  def update(id: Long, tasting: Tasting) = {
+  def update(id: Long, tasting: Tasting) {
     DB.withConnection {
       implicit connection =>
         SQL(
@@ -207,16 +138,8 @@ object Tasting {
     }
   }
 
-  def delete(id: Long) = {
-    DB.withConnection {
-      implicit connection =>
-        SQL(
-          """
-          delete from tasting where id = {id}
-          """
-        ).on('id -> id).executeUpdate()
-    }
-  }
+  def delete(id: Long) =
+    DB.withConnection(implicit c => SQL("delete from tasting where id = {id}").on('id -> id).executeUpdate())
 }
 
 case class User(id: Pk[Long],
@@ -230,12 +153,8 @@ case class User(id: Pk[Long],
 object User {
 
   val USER_ID = "userId"
-  val USERNAME = "username"
   val EMAIL = "email"
 
-  /**
-   * Parse a User from a ResultSet
-   */
   val simple = {
     get[Pk[Long]]("id") ~
       get[String]("email") ~
@@ -247,11 +166,6 @@ object User {
     }
   }
 
-  // -- Queries
-
-  /**
-   * Retrieve a User from email.
-   */
   def findByEmail(email: String): Option[User] = {
     DB.withConnection {
       implicit connection =>
@@ -259,45 +173,14 @@ object User {
     }
   }
 
-  /**
-   * Retrieve a User from email.
-   */
-  def findByToken(token: String): Option[User] = {
-    DB.withConnection {
-      implicit connection =>
-        SQL("select * from users where token = {token}").on(
-          'token -> token
-        ).as(User.simple.singleOpt)
-    }
-  }
+  def authenticate(email: String, password: String): Option[User] =
+    DB.withConnection(implicit c =>
+      SQL("select * from users where email = {email} and password = {password}").on(
+        'email -> email,
+        'password -> password
+      ).as(User.simple.singleOpt)
+    )
 
-  /**
-   * Retrieve all users.
-   */
-  def findAll: Seq[User] = {
-    DB.withConnection {
-      implicit connection =>
-        SQL("select * from users").as(User.simple *)
-    }
-  }
-
-  /**
-   * Authenticate a User.
-   */
-  def authenticate(email: String, password: String): Option[User] = {
-    DB.withConnection {
-      implicit connection =>
-        SQL(
-          """
-           select * from users where
-           email = {email} and password = {password}
-          """
-        ).on(
-          'email -> email,
-          'password -> password
-        ).as(User.simple.singleOpt)
-    }
-  }
 
   def update(user: User) {
     DB.withConnection {
