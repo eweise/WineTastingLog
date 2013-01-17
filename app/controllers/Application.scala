@@ -1,19 +1,13 @@
 package controllers
 
 import play.api.mvc._
-import play.api.data._
 import play.api.data.Forms._
 
 
-import views._
-import models._
 import play.api.data._
-import play.api.data.validation.Constraints._
-import format.Formats._
 
 import views._
 import models._
-import java.util.UUID
 
 object Application extends Controller {
 
@@ -33,7 +27,6 @@ object Application extends Controller {
       "password2" -> nonEmptyText
     ) verifying("Password do not match", reg => reg._3 == reg._4)
   )
-
 
   def login = Action {
     implicit request =>

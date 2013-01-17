@@ -9,12 +9,13 @@ GET     /                        controllers.Application.login
 GET     /assets/*file            controllers.Assets.at(path="/public", file)
 
 GET     /tastings                controllers.Tastings.tastings
+
 GET     /tasting/:id             controllers.EditTasting.edit(id:Long)
-GET     /tasting                 controllers.EditTasting.newTasting
 POST    /tasting/:id             controllers.EditTasting.update(id:Long)
+GET     /tasting                 controllers.EditTasting.newTasting
 POST    /tasting                 controllers.EditTasting.saveNew
 
-GET    /tasting/:id/delete       controllers.EditTasting.delete(id:Long)
+POST    /tasting/:id/delete       controllers.EditTasting.delete(id:Long)
 
 # Authentication
 POST    /login                   controllers.Application.authenticate

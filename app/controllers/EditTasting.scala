@@ -44,16 +44,15 @@ object EditTasting extends Controller {
 
   def saveNew = Action(parse.multipartFormData) {
     implicit request =>
-      var tastingId = 0L
-      val userId = Some(request.session.get(User.USER_ID).get.toLong)
+
+      val userId = request.session.get(User.USER_ID).get.toLong
       tastingForm.bindFromRequest.fold(
         formWithErrors => {
           BadRequest(html.editTastings(None, formWithErrors))
         },
         tasting => {
-          tasting.userId = userId
-          tastingId = Tasting.insert(tasting)
-          saveFile(request, userId, tastingId)
+          tasting.userId = Some(userId)
+          saveFile(request, userId, Tasting.insert(tasting))
           Redirect(routes.Tastings.tastings)
         }
       )
@@ -61,7 +60,7 @@ object EditTasting extends Controller {
 
   def update(id: Long) = Action(parse.multipartFormData) {
     implicit request =>
-      val userId = Some(request.session.get(User.USER_ID).get.toLong)
+      val userId = request.session.get(User.USER_ID).get.toLong
       tastingForm.bindFromRequest.fold(
         formWithErrors => BadRequest(html.editTastings(Some(id), formWithErrors)),
         tasting => {
@@ -72,8 +71,8 @@ object EditTasting extends Controller {
       )
   }
 
-  def saveFile(request: Request[MultipartFormData[Files.TemporaryFile]], userId: Some[Long], tastingId: Long) {
-    request.body.file("image").foreach(f => new S3File(userId.get, tastingId.toString).save(f.ref.file))
+  def saveFile(request: Request[MultipartFormData[Files.TemporaryFile]], userId: Long, tastingId: Long) {
+    request.body.file("image").foreach(f => new S3File(userId, tastingId.toString).save(f.ref.file))
   }
 
 

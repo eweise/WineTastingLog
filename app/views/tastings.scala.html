@@ -9,9 +9,9 @@
 
 <style type="text/css">
 
-.body {
-    opacity: 0.5;
-}
+    .body {
+        opacity: 0.5;
+    }
 </style>
 
 @main {
@@ -24,16 +24,20 @@
             <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Filter</a>
             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="padding:10px">
 
-                <li>@select(field = filterForm("region"), options = Tasting.attributeListTuples("region")(session.get(User.USER_ID).get.toLong), '_default ->
+                <li>@select(field = filterForm("region"), options =
+                    Tasting.attributeListTuples("region")(session.get(User.USER_ID).get.toLong), '_default ->
                     "")
                 </li>
-                <li>@select(field = filterForm("style"), options = Tasting.attributeListTuples("style")(session.get(User.USER_ID).get.toLong), '_default ->
+                <li>@select(field = filterForm("style"), options =
+                    Tasting.attributeListTuples("style")(session.get(User.USER_ID).get.toLong), '_default ->
                     "",'_label -> "Style")
                 </li>
-                <li>@select(field = filterForm("brand"), options = Tasting.attributeListTuples("brand")(session.get(User.USER_ID).get.toLong), '_default ->
+                <li>@select(field = filterForm("brand"), options =
+                    Tasting.attributeListTuples("brand")(session.get(User.USER_ID).get.toLong), '_default ->
                     "")
                 </li>
-                <li>@select(field = filterForm("year"), options = Tasting.attributeListTuples("year")(session.get(User.USER_ID).get.toLong), '_default ->
+                <li>@select(field = filterForm("year"), options =
+                    Tasting.attributeListTuples("year")(session.get(User.USER_ID).get.toLong), '_default ->
                     "")
                 </li>
                 <li>
@@ -92,13 +96,13 @@
             </div>
         </div>
         <div class="span3">
-            <div class="well sidebar-nav">
+            <div class="well sidebar-nav visible-desktop">
                 <ul class="nav nav-list">
                     <li class="nav-header"><h4 style="color:black;">Trending Wines</h4></li>
                     @Tasting.trending.map{ tasting =>
                     <li><a href="#">@tasting.year @tasting.brand @tasting.style</a></li>
                     }
-                    <li class="nav-header"><h4  style="color:black;">Recent Member Entries</h4></li>
+                    <li class="nav-header"><h4 style="color:black;">Recent Member Entries</h4></li>
                     @Tasting.mostRecent.map{ tasting =>
                     <li><a href="#">@tasting.year @tasting.brand @tasting.style</a></li>
                     }
