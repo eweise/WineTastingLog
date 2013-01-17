@@ -24,8 +24,7 @@ d
             <fieldset>
                 @helper.inputText(tastingForm("brand"), '_showConstraints -> false,'_label -> "",'placeholder->"Brand")
                 @helper.inputText(tastingForm("style"), '_showConstraints -> false,'_label -> "",'placeholder->"Style")
-                @helper.inputText(tastingForm("region"), '_showConstraints -> false,'_label ->
-                "",'placeholder->"Region")
+                @helper.inputText(tastingForm("region"), '_showConstraints -> false,'_label -> "",'placeholder->"Region")
                 @helper.inputText(tastingForm("year"), '_showConstraints -> false,'_label -> "",'placeholder->"Year")
                 @helper.textarea(tastingForm("notes"), '_showConstraints -> false,'_label -> "",'placeholder->"Notes")
             </fieldset>
@@ -56,9 +55,9 @@ d
     </div>
     }
     @if(id != None) {
-    @helper.form(routes.EditTasting.delete(id.get), 'id -> "deleteForm") {
+        @helper.form(routes.EditTasting.delete(id.get), 'id -> "deleteForm") {
 
-    }
+        }
     }
 </div>
 

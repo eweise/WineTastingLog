@@ -32,21 +32,16 @@ object Tastings extends Controller {
       user =>
         Action {
           implicit request =>
-            val boundForm = filterForm.bindFromRequest()
-            boundForm.fold(
-              formWithErrors => Redirect(routes.Tastings.tastings),
-              query => {
-                val filteredResult = Tasting.list(user.toLong).filter {
-                  t =>
-                    query._1.foldLeft(true)((a, b) => Some(b) == t.brand) &&
-                      query._2.foldLeft(true)((a, b) => Some(b) == t.style) &&
-                      query._3.foldLeft(true)((a, b) => Some(b) == t.region) &&
-                      query._4.foldLeft(true)((a, b) => Some(b) == t.year)
-                }
-                Ok(html.tastings(filteredResult, boundForm))
-              }
-
-            )
+            val form = filterForm.bindFromRequest()
+            val (brand, style, region, year) = form.get
+            val filteredResult = Tasting.list(user.toLong).filter {
+              t =>
+                brand.foldLeft(true)((a, b) => Some(b) == t.brand) &&
+                  style.foldLeft(true)((a, b) => Some(b) == t.style) &&
+                  region.foldLeft(true)((a, b) => Some(b) == t.region) &&
+                  year.foldLeft(true)((a, b) => Some(b) == t.year)
+            }
+            Ok(html.tastings(filteredResult, form))
         }
     }
   }

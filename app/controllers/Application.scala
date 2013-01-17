@@ -30,7 +30,7 @@ object Application extends Controller {
 
   def login = Action {
     implicit request =>
-      request.session.get(User.EMAIL) match {
+      session.get(User.EMAIL) match {
         case None => Ok(html.login(loginForm))
         case _ => Redirect(routes.Tastings.tastings)
       }
@@ -40,8 +40,9 @@ object Application extends Controller {
     implicit request =>
       loginForm.bindFromRequest.fold(
         formWithErrors => BadRequest(html.login(formWithErrors)),
-        user => {
-          val dbUser = User.findByEmail(user._1).get
+        t => {
+          val (email,password) = t
+          val dbUser = User.findByEmail(email).get
           Redirect(routes.Tastings.tastings).withSession(User.EMAIL -> dbUser.email, User.USER_ID -> dbUser.id.get.toString)
         }
       )
